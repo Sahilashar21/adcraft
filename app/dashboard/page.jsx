@@ -4,7 +4,11 @@ import Link from "next/link";
 
 export default async function DashboardPage() {
   await connectDB();
-  const campaigns = await Campaign.find({ userId: "default_user" }).sort({ createdAt: -1 });
+  const campaigns = await Campaign.find({ userId: "default_user" })
+  .sort({ createdAt: -1 })
+  .lean();
+
+  // const campaigns = await Campaign.find({ userId: "default_user" }).sort({ createdAt: -1 });
 
   return (
     <div className="space-y-6">

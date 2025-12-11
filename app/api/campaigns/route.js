@@ -9,12 +9,14 @@ export async function POST(req) {
     ...body,
     userId: "default_user",
   });
+  // Convert Mongoose doc → plain JSON
+return Response.json(JSON.parse(JSON.stringify(campaign)), { status: 201 });
 
-  return Response.json(campaign, { status: 201 });
+  // return Response.json(campaign, { status: 201 });
 }
 
 export async function GET() {
   await connectDB();
-  const campaigns = await Campaign.find({ userId: "default_user" });
+  const campaigns = await Campaign.find({ userId: "default_user" }).lean();
   return Response.json(campaigns);
 }
