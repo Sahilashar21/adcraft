@@ -10,6 +10,7 @@ const CampaignSchema = new mongoose.Schema(
     description: String,
     objective: String,
     budget: Number,
+    credits: Number,
     targetAudience: String,
     tone: String,
   },
