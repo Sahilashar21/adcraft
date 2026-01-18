@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { Button } from "./ui/button";
 
 export default function DeleteCampaignButton({ id }) {
   const router = useRouter();
@@ -10,15 +11,17 @@ export default function DeleteCampaignButton({ id }) {
       method: "DELETE",
     });
 
-    router.refresh(); // 👈 THIS is the key
+    router.refresh();
   };
 
   return (
-    <button
+    <Button
+      variant="destructive"
+      size="sm"
       onClick={handleDelete}
-      className="px-3 py-1 bg-red-600 text-white rounded"
+      className="bg-red-500/20 hover:bg-red-500/30 border-red-400/50 text-red-200 hover:text-red-100 backdrop-blur-md"
     >
       Delete
-    </button>
+    </Button>
   );
 }

@@ -1,6 +1,7 @@
 // app/api/campaigns/[id]/route.js
 import { connectDB } from "@/lib/mongodb";
 import Campaign from "@/models/Campaign";
+import Caption from "@/models/Caption";
 
 /**
  * Helper to produce JSON Responses consistently
@@ -61,6 +62,11 @@ export async function DELETE(req, context) {
     if (!id) return json({ error: "Missing id param" }, 400);
 
     await connectDB();
+    
+    // Delete associated captions first
+    await Caption.deleteMany({ campaignId: id });
+    
+    // Then delete the campaign
     const deleted = await Campaign.findByIdAndDelete(id);
 
     if (!deleted) return json({ error: "Not found" }, 404);
