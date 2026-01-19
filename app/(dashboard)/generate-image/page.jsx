@@ -244,6 +244,7 @@ export default function GenerateImagePage() {
             // Campaign Selection View
             campaigns.length === 0 ? (
               <motion.div
+                key="empty-state"
                 variants={itemVariants}
                 className="flex flex-1 items-center justify-center rounded-lg border border-white/20 bg-white/5 backdrop-blur-xl shadow-2xl shadow-purple-500/10 min-h-[400px]"
               >
@@ -264,6 +265,7 @@ export default function GenerateImagePage() {
               </motion.div>
             ) : (
               <motion.div
+                key="campaign-list"
                 variants={itemVariants}
                 className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
               >
@@ -300,7 +302,14 @@ export default function GenerateImagePage() {
                             <span className="font-medium text-white">{campaign.platform}</span>
                           </div>
                         </div>
-                        <Button className="w-full mt-4 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-0 shadow-lg shadow-purple-500/25" size="sm">
+                        <Button 
+                          className="w-full mt-4 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-0 shadow-lg shadow-purple-500/25" 
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleCampaignSelect(campaign);
+                          }}
+                        >
                           Generate Images
                         </Button>
                       </CardContent>
@@ -311,9 +320,13 @@ export default function GenerateImagePage() {
             )
           ) : (
             // Image Generation View
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div key="generation-form" className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {/* Generation Form */}
-              <motion.div variants={itemVariants}>
+              <motion.div 
+                variants={itemVariants}
+                initial="hidden"
+                animate="visible"
+              >
                 <Card className="backdrop-blur-xl bg-white/10 border-white/20 shadow-2xl shadow-purple-500/20">
                   <CardHeader>
                     <CardTitle className="text-xl text-white flex items-center gap-2">
@@ -415,7 +428,11 @@ export default function GenerateImagePage() {
               </motion.div>
 
               {/* Generated Image Display */}
-              <motion.div variants={itemVariants}>
+              <motion.div 
+                variants={itemVariants}
+                initial="hidden"
+                animate="visible"
+              >
                 <Card className="backdrop-blur-xl bg-white/10 border-white/20 shadow-2xl shadow-purple-500/20">
                   <CardHeader>
                     <CardTitle className="text-xl text-white flex items-center gap-2">

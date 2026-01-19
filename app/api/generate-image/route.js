@@ -1,12 +1,7 @@
-import Replicate from 'replicate';
 import { NextResponse } from 'next/server';
 import { connectDB } from '@/lib/mongodb';
 import Campaign from '@/models/Campaign';
 import Image from '@/models/Image';
-
-const replicate = new Replicate({
-  auth: process.env.REPLICATE_API_TOKEN,
-});
 
 export async function POST(request) {
   try {
@@ -37,8 +32,18 @@ export async function POST(request) {
       );
     }
 
-    // Generate enhanced prompt based on style and platform
-    let enhancedPrompt = prompt;
+    // Generate enhanced prompt including all campaign details
+    const promptParts = [
+      `Advertisement for ${campaign.businessName}`,
+      campaign.businessType ? `Business Type: ${campaign.businessType}` : '',
+      campaign.description ? `Description: ${campaign.description}` : '',
+      campaign.targetAudience ? `Target Audience: ${campaign.targetAudience}` : '',
+      campaign.tone ? `Tone: ${campaign.tone}` : '',
+      `Objective: ${campaign.objective}`,
+      prompt
+    ];
+
+    let enhancedPrompt = promptParts.filter(Boolean).join('. ');
 
     // Add style-specific enhancements
     switch (style) {
@@ -96,31 +101,26 @@ export async function POST(request) {
         break;
     }
 
-    // Generate image using Stable Diffusion via Replicate
-    const output = await replicate.run(
-      "stability-ai/sdxl:39ed52f2a78e934b3ba6e2a89f5b1c712de7dfea535525255b1aa35c5565e08b",
-      {
-        input: {
-          prompt: enhancedPrompt,
-          negative_prompt: "blurry, low quality, distorted, ugly, poorly drawn, cartoon, anime, text, watermark, signature",
-          width: dimensions.width,
-          height: dimensions.height,
-          num_inference_steps: 25,
-          guidance_scale: 7.5,
-          scheduler: "K_EULER"
-        }
-      }
-    );
+    // Generate image using Pollinations.ai (Free API)
+    // Using a random seed to ensure unique generations for the same prompt
+    const seed = Math.floor(Math.random() * 1000000);
+    const apiKey = process.env.POLLINATIONS_API_KEY;
+    
+    const pollUrl = `https://gen.pollinations.ai/image/${encodeURIComponent(enhancedPrompt)}?model=flux&width=${dimensions.width}&height=${dimensions.height}&seed=${seed}&nologo=true`;
 
-    // The output should be an array with the image URL
-    const imageUrl = Array.isArray(output) ? output[0] : output;
+    const imageRes = await fetch(pollUrl, {
+      headers: apiKey ? { 'Authorization': `Bearer ${apiKey}` } : {},
+      cache: 'no-store'
+    });
 
-    if (!imageUrl) {
-      return NextResponse.json(
-        { error: 'Failed to generate image' },
-        { status: 500 }
-      );
+    if (!imageRes.ok) {
+      throw new Error(`Pollinations API error: ${imageRes.status} ${imageRes.statusText}`);
     }
+
+    const arrayBuffer = await imageRes.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+    const base64Image = buffer.toString('base64');
+    const imageUrl = `data:image/jpeg;base64,${base64Image}`;
 
     // Deduct credits from campaign
     campaign.credits -= 5;
