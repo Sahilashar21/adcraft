@@ -3,7 +3,7 @@
 import CaptionGenerator from '../CaptionGenerator';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { ArrowRight, Sparkles, BarChart3, FileText, Zap, Star, ChevronRight, Gem, PenSquare, Clapperboard } from 'lucide-react';
+import { ArrowRight, Sparkles, BarChart3, FileText, Zap, Star, ChevronRight, Gem, PenSquare, Clapperboard, Library } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
@@ -12,21 +12,21 @@ const features = [
     icon: Sparkles, // Using Sparkles for image generation, as it's general AI
     title: "AI Image Generator",
     description: "Create stunning AI-powered images for your advertisements.",
-    href: "/generate-image",
+    href: "/dashboard/generate-image",
     color: "from-blue-500 to-teal-500"
   },
   {
     icon: Clapperboard,
     title: "AI Video Generator",
     description: "Produce dynamic video advertisements from images with AI.",
-    href: "/generate-video",
+    href: "/dashboard/generate-video",
     color: "from-green-500 to-lime-500"
   },
   {
     icon: PenSquare,
     title: "AI Script Generator",
     description: "Generate engaging advertisement scripts and dialogue.",
-    href: "/generate-script",
+    href: "/dashboard/generate-script",
     color: "from-yellow-500 to-orange-500"
   },
   {
@@ -44,18 +44,11 @@ const features = [
     color: "from-blue-500 to-cyan-500"
   },
   {
-    icon: FileText,
-    title: "Caption Library",
-    description: "Access your generated captions, edit them, and reuse successful content.",
-    href: "/captions",
-    color: "from-green-500 to-emerald-500"
-  },
-  {
-    icon: Zap,
-    title: "Dashboard Analytics",
-    description: "Monitor your campaign performance and optimize your content strategy.",
-    href: "/dashboard",
-    color: "from-orange-500 to-red-500"
+    icon: Library,
+    title: "Campaign Library",
+    description: "Access your generated campaigns, edit them, and reuse successful content.",
+    href: "/campaign-library",
+    color: "from-indigo-500 to-violet-500"
   }
 ];
 
@@ -120,15 +113,15 @@ export default function Home() {
               transition={{ delay: 0.8, duration: 0.8 }}
               className="flex flex-col sm:flex-row gap-4 justify-center"
             >
-              <Link href="/dashboard">
+              <Link href="/campaigns">
                 <Button size="lg" className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-3 text-lg">
                   Get Started
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </Button>
               </Link>
-              <Link href="/dashboard">
+              <Link href="/generate-video">
                 <Button size="lg" variant="outline" className="border-purple-200 text-purple-700 hover:bg-purple-50 px-8 py-3 text-lg">
-                  Watch Demo
+                  Video generation
                 </Button>
               </Link>
             </motion.div>
@@ -189,7 +182,7 @@ export default function Home() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
             viewport={{ once: true }}
-            className="grid md:grid-cols-2 lg:grid-cols-4 gap-8"
+            className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
           >
             {features.map((feature, index) => (
               <motion.div
@@ -202,7 +195,7 @@ export default function Home() {
                 className="group"
               >
                 <Link href={feature.href}>
-                  <Card className="h-full hover:shadow-xl transition-all duration-300 border-0 shadow-lg group-hover:shadow-purple-200/50">
+                  <Card className="h-full hover:shadow-2xl transition-all duration-300 border-gray-100 shadow-lg hover:-translate-y-1">
                     <CardHeader>
                       <div className={`inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r ${feature.color} rounded-lg mb-4 group-hover:scale-110 transition-transform`}>
                         <feature.icon className="w-6 h-6 text-white" />
@@ -273,7 +266,7 @@ export default function Home() {
               Join thousands of marketers who are already using AdCraft to create better content faster.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/dashboard">
+              <Link href="/campaigns/new">
                 <Button size="lg" className="bg-white text-purple-600 hover:bg-gray-100 px-8 py-3 text-lg font-semibold">
                   Start Creating
                   <ArrowRight className="ml-2 w-5 h-5" />
