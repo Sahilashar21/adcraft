@@ -3,11 +3,32 @@
 import CaptionGenerator from '../CaptionGenerator';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { ArrowRight, Sparkles, BarChart3, FileText, Zap, Star, ChevronRight, Gem } from 'lucide-react';
+import { ArrowRight, Sparkles, BarChart3, FileText, Zap, Star, ChevronRight, Gem, PenSquare, Clapperboard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 const features = [
+  {
+    icon: Sparkles, // Using Sparkles for image generation, as it's general AI
+    title: "AI Image Generator",
+    description: "Create stunning AI-powered images for your advertisements.",
+    href: "/generate-image",
+    color: "from-blue-500 to-teal-500"
+  },
+  {
+    icon: Clapperboard,
+    title: "AI Video Generator",
+    description: "Produce dynamic video advertisements from images with AI.",
+    href: "/generate-video",
+    color: "from-green-500 to-lime-500"
+  },
+  {
+    icon: PenSquare,
+    title: "AI Script Generator",
+    description: "Generate engaging advertisement scripts and dialogue.",
+    href: "/generate-script",
+    color: "from-yellow-500 to-orange-500"
+  },
   {
     icon: Sparkles,
     title: "AI Caption Generator",

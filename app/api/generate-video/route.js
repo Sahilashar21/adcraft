@@ -38,7 +38,7 @@ export async function POST(request) {
   try {
     await connectDB();
 
-    const { campaignId, prompt, style, platform } = await request.json();
+    const { campaignId, prompt, style, platform, resolution } = await request.json();
 
     if (!campaignId || !prompt) {
       return NextResponse.json(
@@ -60,6 +60,24 @@ export async function POST(request) {
         { error: 'Insufficient credits. Video costs 10 credits.' },
         { status: 400 }
       );
+    }
+
+    // Determine video size based on resolution
+    let videoSize;
+    switch (resolution) {
+      case 'portrait':
+        videoSize = '720x1280';
+        break;
+      case 'landscape':
+        videoSize = '1280x720';
+        break;
+      case 'banner':
+        videoSize = '1080x360';
+        break;
+      case 'square':
+      default:
+        videoSize = '720x720';
+        break;
     }
 
     /* ================= PROMPT ================= */
@@ -97,6 +115,9 @@ export async function POST(request) {
         break;
       case 'facebook':
         enhancedPrompt += ', facebook ad style';
+        break;
+      case 'twitter':
+        enhancedPrompt += ', twitter ad style';
         break;
       case 'linkedin':
         enhancedPrompt += ', linkedin professional video';
@@ -138,7 +159,7 @@ export async function POST(request) {
             },
           },
         ])
-        .size('720x720')
+        .size(videoSize)
         .fps(30)
         .outputOptions([
           '-pix_fmt yuv420p',
@@ -164,7 +185,9 @@ export async function POST(request) {
     const newVideo = new Video({
       campaignId,
       prompt: enhancedPrompt,
-      videoUrl
+      videoUrl,
+      style,
+      platform,
     });
 
     await newVideo.save();
@@ -173,6 +196,9 @@ export async function POST(request) {
       _id: newVideo._id,
       campaignId,
       videoUrl,
+      prompt: enhancedPrompt,
+      style,
+      platform,
       createdAt: newVideo.createdAt
     });
 

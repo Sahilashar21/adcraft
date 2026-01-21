@@ -3,9 +3,9 @@
 import { Inter } from "next/font/google";
 import "../globals.css";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
-import { Gem, BarChart3, FileText, Zap, Star, ChevronRight, Sparkles, Home, Library, Clapperboard, PenSquare } from 'lucide-react';
+import { Gem, BarChart3, FileText, Zap, Star, Sparkles, Home, Library, Clapperboard, PenSquare } from 'lucide-react';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -14,88 +14,66 @@ export default function DashboardLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   return (
-    <div className="min-h-screen bg-slate-50">
-      <div className="flex min-h-screen">
-        {/* Sidebar */}
-        <aside className={`fixed inset-y-0 left-0 z-30 w-64 bg-white shadow-lg transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out md:relative md:translate-x-0`}>
-          <div className="flex h-16 items-center justify-center border-b">
-            <Link href="/" className="flex items-center gap-2 font-semibold">
-              <Gem className="w-6 h-6 text-purple-600" />
-              <span className="text-xl font-bold text-gray-800">AdCraft</span>
+    <div className={`min-h-screen bg-slate-50 ${inter.className}`}>
+      {/* Top Bar */}
+      <header className="flex h-16 items-center justify-between border-b bg-white px-4 lg:px-6">
+        <div className="flex items-center gap-6"> {/* Left side: Logo and Navigation */}
+          <Link href="/" className="flex items-center gap-2 font-semibold">
+            <Gem className="w-6 h-6 text-purple-600" />
+            <span className="text-xl font-bold text-gray-800">AdCraft</span>
+          </Link>
+          <nav className="hidden md:flex items-center gap-5 text-sm font-medium">
+            <Link href="/dashboard" className="text-gray-600 hover:text-purple-600 transition-colors">
+              <Home className="w-4 h-4 mr-1" />Home
             </Link>
-          </div>
-          <nav className="flex-1 px-4 py-6 space-y-2">
-            <Link href="/" className="flex items-center gap-3 px-4 py-2 text-gray-600 hover:bg-purple-50 hover:text-purple-600 rounded-lg transition-colors">
-              <Home className="w-5 h-5" />
-              <span>Home</span>
+            <Link href="/dashboard/campaigns" className="text-gray-600 hover:text-purple-600 transition-colors">
+              <BarChart3 className="w-4 h-4 mr-1" />Campaigns
             </Link>
-            <Link href="/campaigns" className="flex items-center gap-3 px-4 py-2 text-gray-600 hover:bg-purple-50 hover:text-purple-600 rounded-lg transition-colors">
-              <BarChart3 className="w-5 h-5" />
-              <span>Campaigns</span>
+            <Link href="/dashboard/campaign-library" className="text-gray-600 hover:text-purple-600 transition-colors">
+              <Library className="w-4 h-4 mr-1" />Campaign Library
             </Link>
-            <Link href="/campaign-library" className="flex items-center gap-3 px-4 py-2 text-gray-600 hover:bg-purple-50 hover:text-purple-600 rounded-lg transition-colors">
-              <Library className="w-5 h-5" />
-              <span>Campaign Library</span>
+            <Link href="/dashboard/captions" className="text-gray-600 hover:text-purple-600 transition-colors">
+              <FileText className="w-4 h-4 mr-1" />Captions
             </Link>
-            <Link href="/captions" className="flex items-center gap-3 px-4 py-2 text-gray-600 hover:bg-purple-50 hover:text-purple-600 rounded-lg transition-colors">
-              <FileText className="w-5 h-5" />
-              <span>Captions</span>
+            <Link href="/dashboard/images" className="text-gray-600 hover:text-purple-600 transition-colors">
+              <Sparkles className="w-4 h-4 mr-1" />Images
             </Link>
-            <Link href="/images" className="flex items-center gap-3 px-4 py-2 text-gray-600 hover:bg-purple-50 hover:text-purple-600 rounded-lg transition-colors">
-                <Sparkles className="w-5 h-5" />
-              <span>Images</span>
+            <Link href="/dashboard/videos" className="text-gray-600 hover:text-purple-600 transition-colors">
+              <Clapperboard className="w-4 h-4 mr-1" />Videos
             </Link>
-            <Link href="/videos" className="flex items-center gap-3 px-4 py-2 text-gray-600 hover:bg-purple-50 hover:text-purple-600 rounded-lg transition-colors">
-              <Clapperboard className="w-5 h-5" />
-              <span>Videos</span>
+             <Link href="/dashboard/generate-image" className="text-gray-600 hover:text-purple-600 transition-colors">
+              <Sparkles className="w-4 h-4 mr-1" />Generate Image
             </Link>
-            <p className="px-4 pt-4 pb-2 text-xs text-gray-400 uppercase">Generate</p>
-            <Link href="/generate-image" className="flex items-center gap-3 px-4 py-2 text-gray-600 hover:bg-purple-50 hover:text-purple-600 rounded-lg transition-colors">
-              <Sparkles className="w-5 h-5" />
-              <span>Generate Image</span>
+            <Link href="/dashboard/generate-video" className="text-gray-600 hover:text-purple-600 transition-colors">
+              <Clapperboard className="w-4 h-4 mr-1" />Generate Video
             </Link>
-            <Link href="/generate-video" className="flex items-center gap-3 px-4 py-2 text-gray-600 hover:bg-purple-50 hover:text-purple-600 rounded-lg transition-colors">
-              <Clapperboard className="w-5 h-5" />
-              <span>Generate Video</span>
-            </Link>
-            <Link href="/generate-script" className="flex items-center gap-3 px-4 py-2 text-gray-600 hover:bg-purple-50 hover:text-purple-600 rounded-lg transition-colors">
-              <PenSquare className="w-5 h-5" />
-              <span>Generate Script</span>
+            <Link href="/dashboard/generate-script" className="text-gray-600 hover:text-purple-600 transition-colors">
+              <PenSquare className="w-4 h-4 mr-1" />Generate Script
             </Link>
           </nav>
-        </aside>
-
-        <div className="flex flex-col flex-1">
-          {/* Top Bar */}
-          <header className="flex h-16 items-center justify-between border-b bg-white md:justify-end px-4 lg:px-6">
-            <button
-              className="md:hidden p-2 text-gray-600"
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-            >
-              {sidebarOpen ? '✕' : '☰'}
-            </button>
-            <div className="flex items-center gap-4">
-              <Button variant="ghost">
-                <Zap className="w-5 h-5 text-gray-600" />
-              </Button>
-              <Button variant="ghost">
-                <Star className="w-5 h-5 text-gray-600" />
-              </Button>
-              <img
-                src="https://i.pravatar.cc/40"
-                alt="User avatar"
-                className="w-8 h-8 rounded-full"
-              />
-            </div>
-          </header>
-
-          <main className="flex-1 p-4 lg:p-8">
-            {children}
-          </main>
         </div>
-      </div>
+
+        <div className="flex items-center gap-4"> {/* Right side: Icons and Avatar */}
+          <Button variant="ghost" size="icon" className="hover:bg-purple-50">
+            <Zap className="w-5 h-5 text-gray-600" />
+          </Button>
+          <Button variant="ghost" size="icon" className="hover:bg-purple-50">
+            <Star className="w-5 h-5 text-gray-600" />
+          </Button>
+          <Image
+            src="https://i.pravatar.cc/40"
+            alt="User avatar"
+            width={32}
+            height={32}
+            className="rounded-full border-2 border-purple-300"
+          />
+        </div>
+      </header>
+
+      <main className="flex-1 p-4 lg:p-8">
+        {children}
+      </main>
     </div>
   );
 }
