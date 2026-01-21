@@ -5,6 +5,7 @@ import "../globals.css";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { Gem, BarChart3, FileText, Zap, Star, ChevronRight, Sparkles, Home, Library, Clapperboard, PenSquare } from 'lucide-react';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,85 +16,85 @@ export default function DashboardLayout({
 }>) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
-      {/* Background effects */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(120,119,198,0.3),rgba(255,255,255,0))]" />
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse" />
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-pink-500/20 rounded-full blur-3xl animate-pulse" />
-
-      <div className="flex min-h-screen flex-col relative z-10">
-        {/* Top Navigation Bar */}
-        <header className="flex h-16 items-center justify-between border-b border-white/10 bg-white/5 backdrop-blur-xl px-4 lg:px-6 shadow-lg">
-          <div className="flex items-center gap-4">
+    <div className="min-h-screen bg-slate-50">
+      <div className="flex min-h-screen">
+        {/* Sidebar */}
+        <aside className={`fixed inset-y-0 left-0 z-30 w-64 bg-white shadow-lg transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out md:relative md:translate-x-0`}>
+          <div className="flex h-16 items-center justify-center border-b">
             <Link href="/" className="flex items-center gap-2 font-semibold">
-              <span className="text-2xl bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent"> AdCraft</span>
+              <Gem className="w-6 h-6 text-purple-600" />
+              <span className="text-xl font-bold text-gray-800">AdCraft</span>
             </Link>
           </div>
-          
-          <nav className="hidden md:flex items-center gap-6">
-            <Link href="/" className="text-purple-200 hover:text-white transition-colors duration-200">
-              🏠 Home
+          <nav className="flex-1 px-4 py-6 space-y-2">
+            <Link href="/" className="flex items-center gap-3 px-4 py-2 text-gray-600 hover:bg-purple-50 hover:text-purple-600 rounded-lg transition-colors">
+              <Home className="w-5 h-5" />
+              <span>Home</span>
             </Link>
-            <Link href="/" className="text-white bg-gradient-to-r from-purple-500/20 to-pink-500/20 px-3 py-2 rounded-lg border border-white/20 backdrop-blur-md shadow-lg transition-all duration-200">
-              📊 Dashboard
+            <Link href="/campaigns" className="flex items-center gap-3 px-4 py-2 text-gray-600 hover:bg-purple-50 hover:text-purple-600 rounded-lg transition-colors">
+              <BarChart3 className="w-5 h-5" />
+              <span>Campaigns</span>
             </Link>
-            <Link href="/campaigns" className="text-purple-200 hover:text-white transition-colors duration-200">
-              📋 Campaigns
+            <Link href="/campaign-library" className="flex items-center gap-3 px-4 py-2 text-gray-600 hover:bg-purple-50 hover:text-purple-600 rounded-lg transition-colors">
+              <Library className="w-5 h-5" />
+              <span>Campaign Library</span>
             </Link>
-            <Link href="/captions" className="text-purple-200 hover:text-white transition-colors duration-200">
-              💬 Captions
+            <Link href="/captions" className="flex items-center gap-3 px-4 py-2 text-gray-600 hover:bg-purple-50 hover:text-purple-600 rounded-lg transition-colors">
+              <FileText className="w-5 h-5" />
+              <span>Captions</span>
             </Link>
-            <Link href="/generate-image" className="text-purple-200 hover:text-white transition-colors duration-200">
-              🎨 Generate Image
+            <Link href="/images" className="flex items-center gap-3 px-4 py-2 text-gray-600 hover:bg-purple-50 hover:text-purple-600 rounded-lg transition-colors">
+                <Sparkles className="w-5 h-5" />
+              <span>Images</span>
             </Link>
-            <Link href="/images" className="text-purple-200 hover:text-white transition-colors duration-200">
-              🖼️ Images
+            <Link href="/videos" className="flex items-center gap-3 px-4 py-2 text-gray-600 hover:bg-purple-50 hover:text-purple-600 rounded-lg transition-colors">
+              <Clapperboard className="w-5 h-5" />
+              <span>Videos</span>
             </Link>
-            <Link href="#" className="text-purple-200 hover:text-white transition-colors duration-200">
-              ⚙️ Settings
+            <p className="px-4 pt-4 pb-2 text-xs text-gray-400 uppercase">Generate</p>
+            <Link href="/generate-image" className="flex items-center gap-3 px-4 py-2 text-gray-600 hover:bg-purple-50 hover:text-purple-600 rounded-lg transition-colors">
+              <Sparkles className="w-5 h-5" />
+              <span>Generate Image</span>
+            </Link>
+            <Link href="/generate-video" className="flex items-center gap-3 px-4 py-2 text-gray-600 hover:bg-purple-50 hover:text-purple-600 rounded-lg transition-colors">
+              <Clapperboard className="w-5 h-5" />
+              <span>Generate Video</span>
+            </Link>
+            <Link href="/generate-script" className="flex items-center gap-3 px-4 py-2 text-gray-600 hover:bg-purple-50 hover:text-purple-600 rounded-lg transition-colors">
+              <PenSquare className="w-5 h-5" />
+              <span>Generate Script</span>
             </Link>
           </nav>
+        </aside>
 
-          <div className="flex items-center gap-2">
-            <button className="p-2 border border-white/20 rounded-lg hover:bg-white/10 text-white backdrop-blur-md transition-all duration-200">
-              👤
-            </button>
-            {/* Mobile menu button */}
-            <button 
-              className="md:hidden p-2 border border-white/20 rounded-lg hover:bg-white/10 text-white backdrop-blur-md transition-all duration-200"
+        <div className="flex flex-col flex-1">
+          {/* Top Bar */}
+          <header className="flex h-16 items-center justify-between border-b bg-white md:justify-end px-4 lg:px-6">
+            <button
+              className="md:hidden p-2 text-gray-600"
               onClick={() => setSidebarOpen(!sidebarOpen)}
             >
               {sidebarOpen ? '✕' : '☰'}
             </button>
-          </div>
-        </header>
+            <div className="flex items-center gap-4">
+              <Button variant="ghost">
+                <Zap className="w-5 h-5 text-gray-600" />
+              </Button>
+              <Button variant="ghost">
+                <Star className="w-5 h-5 text-gray-600" />
+              </Button>
+              <img
+                src="https://i.pravatar.cc/40"
+                alt="User avatar"
+                className="w-8 h-8 rounded-full"
+              />
+            </div>
+          </header>
 
-        {/* Mobile Navigation Menu */}
-        {sidebarOpen && (
-          <div className="md:hidden bg-white/5 backdrop-blur-xl border-b border-white/10">
-            <nav className="flex flex-col px-4 py-4 space-y-2">
-              <Link href="/" className="text-purple-200 hover:text-white transition-colors duration-200 py-2" onClick={() => setSidebarOpen(false)}>
-                🏠 Home
-              </Link>
-              <Link href="/dashboard" className="text-white bg-gradient-to-r from-purple-500/20 to-pink-500/20 px-3 py-2 rounded-lg border border-white/20 backdrop-blur-md shadow-lg transition-all duration-200" onClick={() => setSidebarOpen(false)}>
-                📊 Dashboard
-              </Link>
-              <Link href="/campaigns" className="text-purple-200 hover:text-white transition-colors duration-200 py-2" onClick={() => setSidebarOpen(false)}>
-                📋 Campaigns
-              </Link>
-              <Link href="/captions" className="text-purple-200 hover:text-white transition-colors duration-200 py-2" onClick={() => setSidebarOpen(false)}>
-                💬 Captions
-              </Link>
-              <Link href="#" className="text-purple-200 hover:text-white transition-colors duration-200 py-2" onClick={() => setSidebarOpen(false)}>
-                ⚙️ Settings
-              </Link>
-            </nav>
-          </div>
-        )}
-
-        <main className="flex-1 p-4 lg:p-6">
-          {children}
-        </main>
+          <main className="flex-1 p-4 lg:p-8">
+            {children}
+          </main>
+        </div>
       </div>
     </div>
   );
