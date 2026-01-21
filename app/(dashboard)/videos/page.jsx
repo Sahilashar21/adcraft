@@ -5,12 +5,12 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ImageIcon, Calendar, Download, Copy, Check, ArrowLeft, Target, Building, Sparkles, Palette } from "lucide-react";
+import { VideoIcon, Calendar, Download, Copy, Check, ArrowLeft, Target, Building, Sparkles } from "lucide-react";
 
-export default function ImagesPage() {
+export default function VideosPage() {
   const [campaigns, setCampaigns] = useState([]);
   const [selectedCampaign, setSelectedCampaign] = useState(null);
-  const [images, setImages] = useState([]);
+  const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [copiedId, setCopiedId] = useState(null);
 
@@ -30,14 +30,14 @@ export default function ImagesPage() {
     fetchCampaigns();
   }, []);
 
-  const fetchImagesForCampaign = async (campaignId) => {
+  const fetchVideosForCampaign = async (campaignId) => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/images?campaignId=${campaignId}`);
+      const res = await fetch(`/api/videos?campaignId=${campaignId}`);
       const data = await res.json();
-      setImages(data);
+      setVideos(data);
     } catch (err) {
-      console.error('Failed to fetch images:', err);
+      console.error('Failed to fetch videos:', err);
     } finally {
       setLoading(false);
     }
@@ -45,17 +45,17 @@ export default function ImagesPage() {
 
   const handleCampaignSelect = (campaign) => {
     setSelectedCampaign(campaign);
-    fetchImagesForCampaign(campaign._id);
+    fetchVideosForCampaign(campaign._id);
   };
 
   const handleBackToCampaigns = () => {
     setSelectedCampaign(null);
-    setImages([]);
+    setVideos([]);
   };
 
-  const downloadImage = async (imageUrl, filename) => {
+  const downloadVideo = async (videoUrl, filename) => {
     try {
-      const response = await fetch(imageUrl);
+      const response = await fetch(videoUrl);
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -66,7 +66,7 @@ export default function ImagesPage() {
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
     } catch (err) {
-      console.error('Failed to download image:', err);
+      console.error('Failed to download video:', err);
     }
   };
 
@@ -105,13 +105,13 @@ export default function ImagesPage() {
             </Button>
             )}
             <h2 className="text-3xl font-bold text-gray-800 flex items-center gap-3">
-                <Palette className="w-8 h-8 text-purple-600" />
-                {selectedCampaign ? `Images for ${selectedCampaign.name}` : 'Image Library'}
+                <VideoIcon className="w-8 h-8 text-purple-600" />
+                {selectedCampaign ? `Videos for ${selectedCampaign.name}` : 'Video Library'}
             </h2>
         </div>
-        <Link href="/generate-image">
+        <Link href="/generate-video">
             <Button className="bg-purple-600 hover:bg-purple-700 text-white">
-                <Sparkles className="w-4 h-4 mr-2" /> Generate New Image
+                <Sparkles className="w-4 h-4 mr-2" /> Generate New Video
             </Button>
         </Link>
         </div>
@@ -126,7 +126,7 @@ export default function ImagesPage() {
                     No campaigns found
                     </h3>
                     <p className="text-sm text-gray-500">
-                    Create your first campaign to start generating images.
+                    Create your first campaign to start generating videos.
                     </p>
                     <Link href="/campaigns/new">
                     <Button className="mt-4 bg-purple-600 hover:bg-purple-700 text-white">
@@ -162,7 +162,7 @@ export default function ImagesPage() {
                         </div>
                     </div>
                     <Button className="w-full mt-4 bg-purple-600 hover:bg-purple-700 text-white" size="sm">
-                        View Images
+                        View Videos
                     </Button>
                     </CardContent>
                 </Card>
@@ -170,40 +170,40 @@ export default function ImagesPage() {
             </div>
         )
         ) : (
-        // Images View
+        // Videos View
         loading ? (
             <div className="flex items-center justify-center h-full">
                 <div className="text-center">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto mb-4"></div>
-                    <p className="text-lg text-gray-600">Loading images...</p>
+                    <p className="text-lg text-gray-600">Loading videos...</p>
                 </div>
             </div>
-        ) : images.length === 0 ? (
+        ) : videos.length === 0 ? (
             <div className="flex flex-1 items-center justify-center rounded-lg border-2 border-dashed border-gray-200 bg-white min-h-[400px]">
                 <div className="flex flex-col items-center gap-1 text-center">
-                    <ImageIcon className="w-16 h-16 text-gray-400 mb-4" />
+                    <VideoIcon className="w-16 h-16 text-gray-400 mb-4" />
                     <h3 className="text-2xl font-bold tracking-tight text-gray-800">
-                    No images found
+                    No videos found
                     </h3>
                     <p className="text-sm text-gray-500">
-                    No images have been generated for this campaign yet.
+                    No videos have been generated for this campaign yet.
                     </p>
-                    <Link href="/generate-image">
+                    <Link href="/generate-video">
                     <Button className="mt-4 bg-purple-600 hover:bg-purple-700 text-white">
-                        <Sparkles className="w-4 h-4 mr-2" /> Generate Image
+                        <Sparkles className="w-4 h-4 mr-2" /> Generate Video
                     </Button>
                     </Link>
                 </div>
             </div>
         ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {images.map((image) => (
-                <Card key={image._id} className="bg-white shadow-md hover:shadow-lg transition-all duration-300 group">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {videos.map((video) => (
+                <Card key={video._id} className="bg-white shadow-md hover:shadow-lg transition-all duration-300 group">
                     <CardContent className="p-0">
                     <div className="relative">
-                        <img
-                        src={image.imageUrl}
-                        alt={image.prompt}
+                        <video
+                        src={video.videoUrl}
+                        controls
                         className="w-full h-48 object-cover rounded-t-lg"
                         />
                         <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -211,7 +211,7 @@ export default function ImagesPage() {
                             size="icon"
                             variant="secondary"
                             className="h-8 w-8"
-                            onClick={() => downloadImage(image.imageUrl, `adcraft-${image._id}.png`)}
+                            onClick={() => downloadVideo(video.videoUrl, `adcraft-${video._id}.mp4`)}
                         >
                             <Download className="w-4 h-4" />
                         </Button>
@@ -219,9 +219,9 @@ export default function ImagesPage() {
                             size="icon"
                             variant="secondary"
                             className="h-8 w-8"
-                            onClick={() => copyToClipboard(image.prompt, image._id)}
+                            onClick={() => copyToClipboard(video.prompt, video._id)}
                         >
-                            {copiedId === image._id ? (
+                            {copiedId === video._id ? (
                             <Check className="w-4 h-4" />
                             ) : (
                             <Copy className="w-4 h-4" />
@@ -231,19 +231,19 @@ export default function ImagesPage() {
                     </div>
                     <div className="p-4">
                         <p className="text-sm text-gray-500 line-clamp-2 mb-2">
-                        {image.prompt}
+                        {video.prompt}
                         </p>
                         <div className="flex justify-between items-center text-xs text-gray-500">
                         <div className="flex items-center gap-1">
                             <Calendar className="w-3 h-3" />
-                            {new Date(image.createdAt).toLocaleDateString()}
+                            {new Date(video.createdAt).toLocaleDateString()}
                         </div>
                         <div className="flex gap-1">
                             <Badge variant="outline" className="border-purple-200 text-purple-600 bg-purple-50">
-                            {image.style}
+                            {video.style}
                             </Badge>
                             <Badge variant="outline" className="border-purple-200 text-purple-600 bg-purple-50">
-                            {image.platform}
+                            {video.platform}
                             </Badge>
                         </div>
                         </div>
@@ -255,9 +255,9 @@ export default function ImagesPage() {
         )
         )}
 
-        {selectedCampaign && images.length > 0 && (
+        {selectedCampaign && videos.length > 0 && (
         <div className="text-center text-sm text-gray-500">
-            Showing {images.length} image{images.length !== 1 ? 's' : ''} for {selectedCampaign.name}
+            Showing {videos.length} video{videos.length !== 1 ? 's' : ''} for {selectedCampaign.name}
         </div>
         )}
     </div>

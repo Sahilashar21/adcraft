@@ -1,11 +1,10 @@
 import { NextResponse } from 'next/server';
 import { connectDB } from '@/lib/mongodb';
-import Image from '@/models/Image';
+import Video from '@/models/Video';
 
 export async function GET(request) {
   try {
     await connectDB();
-
     const { searchParams } = new URL(request.url);
     const campaignId = searchParams.get('campaignId');
 
@@ -16,14 +15,11 @@ export async function GET(request) {
       );
     }
 
-    const images = await Image.find({ campaignId })
-      .sort({ createdAt: -1 })
-      .lean();
+    const videos = await Video.find({ campaignId }).sort({ createdAt: -1 });
 
-    return NextResponse.json(images);
-
+    return NextResponse.json(videos);
   } catch (error) {
-    console.error('Error fetching images:', error);
+    console.error('Failed to fetch videos:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -40,16 +36,16 @@ export async function DELETE(request) {
 
     if (!id) {
       return NextResponse.json(
-        { error: 'Image ID is required' },
+        { error: 'Video ID is required' },
         { status: 400 }
       );
     }
 
-    await Image.findByIdAndDelete(id);
+    await Video.findByIdAndDelete(id);
 
-    return NextResponse.json({ message: 'Image deleted successfully' });
+    return NextResponse.json({ message: 'Video deleted successfully' });
   } catch (error) {
-    console.error('Error deleting image:', error);
+    console.error('Error deleting video:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

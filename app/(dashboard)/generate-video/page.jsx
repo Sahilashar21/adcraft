@@ -5,17 +5,17 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ImageIcon, Calendar, Download, Copy, Check, ArrowLeft, Target, Building, Sparkles, Palette, Monitor, Wand2 } from "lucide-react";
+import { VideoIcon, Calendar, Download, Copy, Check, ArrowLeft, Target, Building, Sparkles, Palette, Monitor, Wand2 } from "lucide-react";
 
-export default function GenerateImagePage() {
+export default function GenerateVideoPage() {
   const [campaigns, setCampaigns] = useState([]);
   const [selectedCampaign, setSelectedCampaign] = useState(null);
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
-  const [generatedImage, setGeneratedImage] = useState(null);
+  const [generatedVideo, setGeneratedVideo] = useState(null);
   const [copiedPrompt, setCopiedPrompt] = useState(false);
 
-  // Form state for image generation
+  // Form state for video generation
   const [prompt, setPrompt] = useState('');
   const [style, setStyle] = useState('professional');
   const [platform, setPlatform] = useState('instagram');
@@ -43,11 +43,11 @@ export default function GenerateImagePage() {
 
   const handleBackToCampaigns = () => {
     setSelectedCampaign(null);
-    setGeneratedImage(null);
+    setGeneratedVideo(null);
     setPrompt('');
   };
 
-  const handleGenerateImage = async () => {
+  const handleGenerateVideo = async () => {
     if (!selectedCampaign || !prompt.trim()) {
       alert('Please select a campaign and enter a prompt');
       return;
@@ -56,7 +56,7 @@ export default function GenerateImagePage() {
     setGenerating(true);
 
     try {
-      const res = await fetch('/api/generate-image', {
+      const res = await fetch('/api/generate-video', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -74,19 +74,19 @@ export default function GenerateImagePage() {
         throw new Error(data.error || 'Something went wrong');
       }
 
-      setGeneratedImage(data);
+      setGeneratedVideo(data);
       setPrompt('');
     } catch (err) {
-      console.error('Failed to generate image:', err);
-      alert('Failed to generate image: ' + err.message);
+      console.error('Failed to generate video:', err);
+      alert('Failed to generate video: ' + err.message);
     } finally {
       setGenerating(false);
     }
   };
 
-  const downloadImage = async (imageUrl, filename) => {
+  const downloadVideo = async (videoUrl, filename) => {
     try {
-      const response = await fetch(imageUrl);
+      const response = await fetch(videoUrl);
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -97,7 +97,7 @@ export default function GenerateImagePage() {
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
     } catch (err) {
-      console.error('Failed to download image:', err);
+      console.error('Failed to download video:', err);
     }
   };
 
@@ -137,12 +137,12 @@ export default function GenerateImagePage() {
             )}
             <h2 className="text-3xl font-bold text-gray-800 flex items-center gap-3">
                 <Wand2 className="w-8 h-8 text-purple-600" />
-                AI Image Generator
+                AI Video Generator
             </h2>
         </div>
-        <Link href="/images">
+        <Link href="/videos">
             <Button className="bg-purple-600 hover:bg-purple-700 text-white">
-                <ImageIcon className="w-4 h-4 mr-2" /> View Images
+                <VideoIcon className="w-4 h-4 mr-2" /> View Videos
             </Button>
         </Link>
         </div>
@@ -157,7 +157,7 @@ export default function GenerateImagePage() {
                     No campaigns found
                     </h3>
                     <p className="text-sm text-gray-500">
-                    Create your first campaign to start generating images.
+                    Create your first campaign to start generating videos.
                     </p>
                     <Link href="/campaigns/new">
                     <Button className="mt-4 bg-purple-600 hover:bg-purple-700 text-white">
@@ -196,7 +196,7 @@ export default function GenerateImagePage() {
                         className="w-full mt-4 bg-purple-600 hover:bg-purple-700 text-white" 
                         size="sm"
                     >
-                        Generate Images
+                        Generate Videos
                     </Button>
                     </CardContent>
                 </Card>
@@ -204,14 +204,14 @@ export default function GenerateImagePage() {
             </div>
         )
         ) : (
-        // Image Generation View
+        // Video Generation View
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Generation Form */}
             <Card className="bg-white shadow-lg">
                 <CardHeader>
                 <CardTitle className="text-xl flex items-center gap-2">
                     <Wand2 className="w-5 h-5" />
-                    Generate Image
+                    Generate Video
                 </CardTitle>
                 <CardDescription>
                     Create AI-powered advertisement visuals for {selectedCampaign.name}
@@ -269,7 +269,7 @@ export default function GenerateImagePage() {
 
                 <div className="space-y-2">
                     <label className="text-sm font-medium flex items-center gap-2">
-                    <ImageIcon className="w-4 h-4" />
+                    <VideoIcon className="w-4 h-4" />
                     Resolution
                     </label>
                     <select
@@ -286,7 +286,7 @@ export default function GenerateImagePage() {
 
                 <div className="pt-4">
                     <Button
-                    onClick={handleGenerateImage}
+                    onClick={handleGenerateVideo}
                     disabled={generating || !prompt.trim()}
                     className="w-full bg-purple-600 hover:bg-purple-700 text-white disabled:opacity-50"
                     >
@@ -298,7 +298,7 @@ export default function GenerateImagePage() {
                     ) : (
                         <>
                         <Wand2 className="w-4 h-4 mr-2" />
-                        Generate Image (5 Credits)
+                        Generate Video (10 Credits)
                         </>
                     )}
                     </Button>
@@ -306,24 +306,24 @@ export default function GenerateImagePage() {
                 </CardContent>
             </Card>
 
-            {/* Generated Image Display */}
+            {/* Generated Video Display */}
             <Card className="bg-white shadow-lg">
                 <CardHeader>
                 <CardTitle className="text-xl flex items-center gap-2">
-                    <ImageIcon className="w-5 h-5" />
-                    Generated Image
+                    <VideoIcon className="w-5 h-5" />
+                    Generated Video
                 </CardTitle>
                 <CardDescription>
                     Your AI-generated advertisement visual
                 </CardDescription>
                 </CardHeader>
                 <CardContent>
-                {generatedImage ? (
+                {generatedVideo ? (
                     <div className="space-y-4">
                     <div className="relative group">
-                        <img
-                        src={generatedImage.imageUrl}
-                        alt={generatedImage.prompt}
+                        <video
+                        src={generatedVideo.videoUrl}
+                        controls
                         className="w-full rounded-lg shadow-md"
                         />
                         <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -331,7 +331,7 @@ export default function GenerateImagePage() {
                             size="sm"
                             variant="secondary"
                             className="h-8 w-8 p-0"
-                            onClick={() => downloadImage(generatedImage.imageUrl, `adcraft-${generatedImage._id}.png`)}
+                            onClick={() => downloadVideo(generatedVideo.videoUrl, `adcraft-${generatedVideo._id}.mp4`)}
                         >
                             <Download className="w-4 h-4" />
                         </Button>
@@ -339,7 +339,7 @@ export default function GenerateImagePage() {
                             size="sm"
                             variant="secondary"
                             className="h-8 w-8 p-0"
-                            onClick={() => copyToClipboard(generatedImage.prompt)}
+                            onClick={() => copyToClipboard(generatedVideo.prompt)}
                         >
                             {copiedPrompt ? (
                             <Check className="w-4 h-4" />
@@ -352,19 +352,19 @@ export default function GenerateImagePage() {
 
                     <div className="space-y-2">
                         <p className="text-sm text-gray-500 line-clamp-3">
-                        {generatedImage.prompt}
+                        {generatedVideo.prompt}
                         </p>
                         <div className="flex justify-between items-center text-xs text-gray-500">
                         <div className="flex items-center gap-1">
                             <Calendar className="w-3 h-3" />
-                            {new Date(generatedImage.createdAt).toLocaleDateString()}
+                            {new Date(generatedVideo.createdAt).toLocaleDateString()}
                         </div>
                         <div className="flex gap-1">
                             <Badge variant="outline" className="border-purple-200 text-purple-600 bg-purple-50">
-                            {generatedImage.style}
+                            {generatedVideo.style}
                             </Badge>
                             <Badge variant="outline" className="border-purple-200 text-purple-600 bg-purple-50">
-                            {generatedImage.platform}
+                            {generatedVideo.platform}
                             </Badge>
                         </div>
                         </div>
@@ -372,22 +372,22 @@ export default function GenerateImagePage() {
 
                     <div className="pt-4 border-t">
                         <Button
-                        onClick={() => setGeneratedImage(null)}
+                        onClick={() => setGeneratedVideo(null)}
                         variant="outline"
                         className="w-full"
                         >
-                        Generate Another Image
+                        Generate Another Video
                         </Button>
                     </div>
                     </div>
                 ) : (
                     <div className="flex flex-col items-center justify-center min-h-[300px] text-center">
-                    <ImageIcon className="w-16 h-16 text-gray-400 mb-4" />
+                    <VideoIcon className="w-16 h-16 text-gray-400 mb-4" />
                     <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                        No Image Generated Yet
+                        No Video Generated Yet
                     </h3>
                     <p className="text-sm text-gray-500">
-                        Fill out the form and click "Generate Image" to create your first AI-powered advertisement visual.
+                        Fill out the form and click "Generate Video" to create your first AI-powered advertisement visual.
                     </p>
                     </div>
                 )}
@@ -398,7 +398,7 @@ export default function GenerateImagePage() {
 
         {selectedCampaign && (
         <div className="text-center text-sm text-gray-500">
-            Generating images for {selectedCampaign.name} • {selectedCampaign.credits} credits remaining
+            Generating videos for {selectedCampaign.name} • {selectedCampaign.credits} credits remaining
         </div>
         )}
     </div>

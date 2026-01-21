@@ -106,7 +106,7 @@ export async function POST(request) {
     const seed = Math.floor(Math.random() * 1000000);
     const apiKey = process.env.POLLINATIONS_API_KEY;
     
-    const pollUrl = `https://gen.pollinations.ai/image/${encodeURIComponent(enhancedPrompt)}?model=flux&width=${dimensions.width}&height=${dimensions.height}&seed=${seed}&nologo=true`;
+    const pollUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(enhancedPrompt)}`;
 
     const imageRes = await fetch(pollUrl, {
       headers: apiKey ? { 'Authorization': `Bearer ${apiKey}` } : {},
@@ -114,7 +114,8 @@ export async function POST(request) {
     });
 
     if (!imageRes.ok) {
-      throw new Error(`Pollinations API error: ${imageRes.status} ${imageRes.statusText}`);
+      const errorText = await imageRes.text();
+      throw new Error(`Pollinations API error: ${imageRes.status} ${imageRes.statusText} - ${errorText}`);
     }
 
     const arrayBuffer = await imageRes.arrayBuffer();
@@ -152,7 +153,7 @@ export async function POST(request) {
   } catch (error) {
     console.error('Image generation error:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: error.message || 'Internal server error' },
       { status: 500 }
     );
   }

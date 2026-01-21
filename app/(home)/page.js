@@ -3,11 +3,32 @@
 import CaptionGenerator from '../CaptionGenerator';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { ArrowRight, Sparkles, BarChart3, FileText, Zap, Star, ChevronRight, Gem } from 'lucide-react';
+import { ArrowRight, Sparkles, BarChart3, FileText, Zap, Star, ChevronRight, Gem, PenSquare, Clapperboard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 const features = [
+  {
+    icon: Sparkles, // Using Sparkles for image generation, as it's general AI
+    title: "AI Image Generator",
+    description: "Create stunning AI-powered images for your advertisements.",
+    href: "/generate-image",
+    color: "from-blue-500 to-teal-500"
+  },
+  {
+    icon: Clapperboard,
+    title: "AI Video Generator",
+    description: "Produce dynamic video advertisements from images with AI.",
+    href: "/generate-video",
+    color: "from-green-500 to-lime-500"
+  },
+  {
+    icon: PenSquare,
+    title: "AI Script Generator",
+    description: "Generate engaging advertisement scripts and dialogue.",
+    href: "/generate-script",
+    color: "from-yellow-500 to-orange-500"
+  },
   {
     icon: Sparkles,
     title: "AI Caption Generator",
@@ -99,13 +120,17 @@ export default function Home() {
               transition={{ delay: 0.8, duration: 0.8 }}
               className="flex flex-col sm:flex-row gap-4 justify-center"
             >
-              <Button size="lg" className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-3 text-lg">
-                Get Started
-                <ArrowRight className="ml-2 w-5 h-5" />
-              </Button>
-              <Button size="lg" variant="outline" className="border-purple-200 text-purple-700 hover:bg-purple-50 px-8 py-3 text-lg">
-                Watch Demo
-              </Button>
+              <Link href="/dashboard">
+                <Button size="lg" className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-3 text-lg">
+                  Get Started
+                  <ArrowRight className="ml-2 w-5 h-5" />
+                </Button>
+              </Link>
+              <Link href="/dashboard">
+                <Button size="lg" variant="outline" className="border-purple-200 text-purple-700 hover:bg-purple-50 px-8 py-3 text-lg">
+                  Watch Demo
+                </Button>
+              </Link>
             </motion.div>
           </motion.div>
         </div>

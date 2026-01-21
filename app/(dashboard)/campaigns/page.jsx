@@ -15,28 +15,28 @@ export default async function CampaignsPage() {
     .lean();
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-8">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-white">Campaigns</h1>
+        <h1 className="text-3xl font-bold text-gray-800">Campaigns</h1>
         <Link href="/campaigns/new">
-          <Button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-0 shadow-lg shadow-purple-500/25">
+          <Button className="bg-purple-600 hover:bg-purple-700 text-white">
             <CirclePlus className="w-4 h-4 mr-2" /> Create New Campaign
           </Button>
         </Link>
       </div>
 
       {campaigns.length === 0 ? (
-        <div className="flex flex-1 items-center justify-center rounded-lg border border-white/20 bg-white/5 backdrop-blur-xl shadow-2xl shadow-purple-500/10 min-h-[400px]">
-          <div className="flex flex-col items-center gap-1 text-center">
-            <Target className="w-16 h-16 text-purple-400 mb-4" />
-            <h3 className="text-2xl font-bold tracking-tight text-white">
+        <div className="flex flex-1 items-center justify-center rounded-lg border-2 border-dashed border-gray-200 bg-white min-h-[400px]">
+          <div className="flex flex-col items-center gap-2 text-center">
+            <Target className="w-16 h-16 text-gray-400 mb-4" />
+            <h3 className="text-2xl font-bold tracking-tight text-gray-800">
               No campaigns yet
             </h3>
-            <p className="text-sm text-purple-200">
+            <p className="text-sm text-gray-500">
               Create your first campaign to get started with AI-powered marketing.
             </p>
             <Link href="/campaigns/new">
-              <Button className="mt-4 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-0 shadow-lg shadow-purple-500/25">
+              <Button className="mt-4 bg-purple-600 hover:bg-purple-700 text-white">
                 <CirclePlus className="w-4 h-4 mr-2" /> Create Campaign
               </Button>
             </Link>
@@ -45,30 +45,30 @@ export default async function CampaignsPage() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {campaigns.map((c) => (
-            <Card key={c._id.toString()} className="backdrop-blur-xl bg-white/10 border-white/20 shadow-2xl shadow-purple-500/20 hover:shadow-purple-500/30 transition-all duration-300 hover:scale-105">
+            <Card key={c._id.toString()} className="bg-white shadow-md hover:shadow-lg transition-all duration-300">
               <CardHeader>
-                <CardTitle className="flex justify-between items-start text-white">
+                <CardTitle className="flex justify-between items-start text-gray-800">
                   <span className="text-xl">{c.name}</span>
-                  <Badge variant="outline" className="border-purple-400/50 text-purple-200 bg-purple-500/10">{c.objective}</Badge>
+                  <Badge variant="outline" className="border-purple-200 text-purple-600 bg-purple-50">{c.objective}</Badge>
                 </CardTitle>
-                <CardDescription className="text-purple-200">{c.businessName}</CardDescription>
+                <CardDescription>{c.businessName}</CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-purple-200 mb-4 line-clamp-2">
+                <p className="text-sm text-gray-600 mb-4 line-clamp-2">
                   {c.description}
                 </p>
-                <div className="flex justify-between items-center text-sm text-purple-200 mb-4">
+                <div className="flex justify-between items-center text-sm text-gray-600 mb-4">
                   <span>Budget: ${c.budget}</span>
                   <span>Credits: {c.credits || 0}</span>
                 </div>
                 <div className="flex gap-2">
-                  <Link href={`/campaigns/${c._id}/edit`}>
-                    <Button variant="outline" size="sm" className="border-white/20 text-white hover:bg-white/10 backdrop-blur-md">
+                  <Link href={`/campaigns/${c._id.toString()}/edit`}>
+                    <Button variant="outline" size="sm">
                       <Edit className="w-4 h-4 mr-1" /> Edit
                     </Button>
                   </Link>
-                  <Link href={`/campaigns/${c._id}`}>
-                    <Button variant="outline" size="sm" className="border-white/20 text-white hover:bg-white/10 backdrop-blur-md">
+                  <Link href={`/campaigns/${c._id.toString()}`}>
+                    <Button variant="outline" size="sm">
                       <Eye className="w-4 h-4 mr-1" /> View
                     </Button>
                   </Link>

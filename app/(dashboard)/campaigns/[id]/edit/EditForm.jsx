@@ -53,7 +53,7 @@ export default function EditForm({ campaign }) {
         throw new Error(txt || `Status ${res.status}`);
       }
 
-      router.push("/dashboard");
+      router.push("/campaigns");
     } catch (err) {
       console.error("Save failed:", err);
       setError(err.message || "Save failed");
@@ -63,43 +63,42 @@ export default function EditForm({ campaign }) {
 
   return (
     <form onSubmit={onSubmit} className="space-y-6">
-      {error && <div className="text-red-400 font-medium bg-red-500/20 border border-red-400/50 rounded-md p-3 backdrop-blur-md">{error}</div>}
+      {error && <div className="text-red-600 font-medium bg-red-50 border border-red-200 rounded-md p-3">{error}</div>}
 
       <div className="space-y-2">
-        <Label htmlFor="name" className="text-white">Name</Label>
-        <Input id="name" name="name" defaultValue={campaign.name || ""} className="bg-white/10 border-white/20 text-white placeholder:text-purple-200 focus:border-purple-400" />
+        <Label htmlFor="name">Name</Label>
+        <Input id="name" name="name" defaultValue={campaign.name || ""} />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
-          <Label htmlFor="businessName" className="text-white">Business Name</Label>
-          <Input id="businessName" name="businessName" defaultValue={campaign.businessName || ""} className="bg-white/10 border-white/20 text-white placeholder:text-purple-200 focus:border-purple-400" />
+          <Label htmlFor="businessName">Business Name</Label>
+          <Input id="businessName" name="businessName" defaultValue={campaign.businessName || ""} />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="businessType" className="text-white">Business Type</Label>
-          <Input id="businessType" name="businessType" defaultValue={campaign.businessType || ""} className="bg-white/10 border-white/20 text-white placeholder:text-purple-200 focus:border-purple-400" />
+          <Label htmlFor="businessType">Business Type</Label>
+          <Input id="businessType" name="businessType" defaultValue={campaign.businessType || ""} />
         </div>
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="description" className="text-white">Description</Label>
-        <Textarea id="description" name="description" defaultValue={campaign.description || ""} className="bg-white/10 border-white/20 text-white placeholder:text-purple-200 focus:border-purple-400" />
+        <Label htmlFor="description">Description</Label>
+        <Textarea id="description" name="description" defaultValue={campaign.description || ""} />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="objective" className="text-white">Objective</Label>
-        <Input id="objective" name="objective" defaultValue={campaign.objective || ""} className="bg-white/10 border-white/20 text-white placeholder:text-purple-200 focus:border-purple-400" />
+        <Label htmlFor="objective">Objective</Label>
+        <Input id="objective" name="objective" defaultValue={campaign.objective || ""} />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
         <div className="space-y-2">
-          <Label htmlFor="addBudget" className="text-white">Add Credits (₹)</Label>
+          <Label htmlFor="addBudget">Add Credits (₹)</Label>
           <Input
             id="addBudget"
             name="addBudget"
             type="number"
             placeholder="e.g. 500"
-            className="bg-white/10 border-white/20 text-white placeholder:text-purple-200 focus:border-purple-400"
             value={addBudget}
             onChange={(e) => {
               setAddBudget(e.target.value);
@@ -109,25 +108,25 @@ export default function EditForm({ campaign }) {
         </div>
         <div className="space-y-2">
           {addBudget !== "" && (
-            <div className="p-3 bg-purple-500/20 border border-purple-400/50 rounded-md backdrop-blur-md">
-              <p className="text-sm font-medium text-purple-200">Credits to Add: <span className="font-bold text-white">{additionalCredits}</span></p>
+            <div className="p-3 bg-purple-50 border border-purple-200 rounded-md">
+              <p className="text-sm font-medium text-purple-700">Credits to Add: <span className="font-bold text-gray-800">{additionalCredits}</span></p>
             </div>
           )}
         </div>
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="targetAudience" className="text-white">Target Audience</Label>
-        <Textarea id="targetAudience" name="targetAudience" defaultValue={campaign.targetAudience || ""} className="bg-white/10 border-white/20 text-white placeholder:text-purple-200 focus:border-purple-400" />
+        <Label htmlFor="targetAudience">Target Audience</Label>
+        <Textarea id="targetAudience" name="targetAudience" defaultValue={campaign.targetAudience || ""} />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="tone" className="text-white">Tone</Label>
-        <Input id="tone" name="tone" defaultValue={campaign.tone || ""} className="bg-white/10 border-white/20 text-white placeholder:text-purple-200 focus:border-purple-400" />
+        <Label htmlFor="tone">Tone</Label>
+        <Input id="tone" name="tone" defaultValue={campaign.tone || ""} />
       </div>
 
       <div>
-        <Button type="submit" disabled={saving} className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-0 shadow-lg shadow-purple-500/25 disabled:opacity-50">
+        <Button type="submit" disabled={saving} className="w-full bg-purple-600 hover:bg-purple-700 text-white disabled:opacity-50">
           {saving ? "Saving…" : "Save Changes"}
         </Button>
       </div>

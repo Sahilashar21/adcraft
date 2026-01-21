@@ -5,21 +5,18 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ImageIcon, Calendar, Download, Copy, Check, ArrowLeft, Target, Building, Sparkles, Palette, Monitor, Wand2 } from "lucide-react";
+import { FileText, Calendar, Download, Copy, Check, ArrowLeft, Target, Building, Sparkles, Wand2 } from "lucide-react";
 
-export default function GenerateImagePage() {
+export default function GenerateScriptPage() {
   const [campaigns, setCampaigns] = useState([]);
   const [selectedCampaign, setSelectedCampaign] = useState(null);
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
-  const [generatedImage, setGeneratedImage] = useState(null);
+  const [generatedScript, setGeneratedScript] = useState(null);
   const [copiedPrompt, setCopiedPrompt] = useState(false);
 
-  // Form state for image generation
+  // Form state for script generation
   const [prompt, setPrompt] = useState('');
-  const [style, setStyle] = useState('professional');
-  const [platform, setPlatform] = useState('instagram');
-  const [resolution, setResolution] = useState('square');
 
   useEffect(() => {
     const fetchCampaigns = async () => {
@@ -43,11 +40,11 @@ export default function GenerateImagePage() {
 
   const handleBackToCampaigns = () => {
     setSelectedCampaign(null);
-    setGeneratedImage(null);
+    setGeneratedScript(null);
     setPrompt('');
   };
 
-  const handleGenerateImage = async () => {
+  const handleGenerateScript = async () => {
     if (!selectedCampaign || !prompt.trim()) {
       alert('Please select a campaign and enter a prompt');
       return;
@@ -56,15 +53,12 @@ export default function GenerateImagePage() {
     setGenerating(true);
 
     try {
-      const res = await fetch('/api/generate-image', {
+      const res = await fetch('/api/generate-script', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           campaignId: selectedCampaign._id,
           prompt,
-          style,
-          platform,
-          resolution
         }),
       });
 
@@ -74,30 +68,13 @@ export default function GenerateImagePage() {
         throw new Error(data.error || 'Something went wrong');
       }
 
-      setGeneratedImage(data);
+      setGeneratedScript(data);
       setPrompt('');
     } catch (err) {
-      console.error('Failed to generate image:', err);
-      alert('Failed to generate image: ' + err.message);
+      console.error('Failed to generate script:', err);
+      alert('Failed to generate script: ' + err.message);
     } finally {
       setGenerating(false);
-    }
-  };
-
-  const downloadImage = async (imageUrl, filename) => {
-    try {
-      const response = await fetch(imageUrl);
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-    } catch (err) {
-      console.error('Failed to download image:', err);
     }
   };
 
@@ -137,12 +114,12 @@ export default function GenerateImagePage() {
             )}
             <h2 className="text-3xl font-bold text-gray-800 flex items-center gap-3">
                 <Wand2 className="w-8 h-8 text-purple-600" />
-                AI Image Generator
+                AI Script Generator
             </h2>
         </div>
-        <Link href="/images">
+        <Link href="/scripts">
             <Button className="bg-purple-600 hover:bg-purple-700 text-white">
-                <ImageIcon className="w-4 h-4 mr-2" /> View Images
+                <FileText className="w-4 h-4 mr-2" /> View Scripts
             </Button>
         </Link>
         </div>
@@ -157,7 +134,7 @@ export default function GenerateImagePage() {
                     No campaigns found
                     </h3>
                     <p className="text-sm text-gray-500">
-                    Create your first campaign to start generating images.
+                    Create your first campaign to start generating scripts.
                     </p>
                     <Link href="/campaigns/new">
                     <Button className="mt-4 bg-purple-600 hover:bg-purple-700 text-white">
@@ -196,7 +173,7 @@ export default function GenerateImagePage() {
                         className="w-full mt-4 bg-purple-600 hover:bg-purple-700 text-white" 
                         size="sm"
                     >
-                        Generate Images
+                        Generate Scripts
                     </Button>
                     </CardContent>
                 </Card>
@@ -204,89 +181,36 @@ export default function GenerateImagePage() {
             </div>
         )
         ) : (
-        // Image Generation View
+        // Script Generation View
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Generation Form */}
             <Card className="bg-white shadow-lg">
                 <CardHeader>
                 <CardTitle className="text-xl flex items-center gap-2">
                     <Wand2 className="w-5 h-5" />
-                    Generate Image
+                    Generate Script
                 </CardTitle>
                 <CardDescription>
-                    Create AI-powered advertisement visuals for {selectedCampaign.name}
+                    Create an AI-powered script for {selectedCampaign.name}
                 </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                 <div className="space-y-2">
                     <label className="text-sm font-medium flex items-center gap-2">
                     <Sparkles className="w-4 h-4" />
-                    Description/Prompt
+                    Story/Text Input
                     </label>
                     <textarea
                     value={prompt}
                     onChange={(e) => setPrompt(e.target.value)}
-                    placeholder="Describe your product, mood, colors, and advertising goal..."
-                    className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-purple-500 focus:border-purple-500 min-h-[100px] resize-none"
+                    placeholder="Enter a story, a product description, or any text to generate a script from..."
+                    className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-purple-500 focus:border-purple-500 min-h-[200px] resize-none"
                     />
-                </div>
-
-                <div className="space-y-2">
-                    <label className="text-sm font-medium flex items-center gap-2">
-                    <Palette className="w-4 h-4" />
-                    Style
-                    </label>
-                    <select
-                    value={style}
-                    onChange={(e) => setStyle(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-purple-500 focus:border-purple-500"
-                    >
-                    <option value="professional">Professional</option>
-                    <option value="creative">Creative</option>
-                    <option value="minimalist">Minimalist</option>
-                    <option value="vibrant">Vibrant</option>
-                    <option value="luxury">Luxury</option>
-                    </select>
-                </div>
-
-                <div className="space-y-2">
-                    <label className="text-sm font-medium flex items-center gap-2">
-                    <Monitor className="w-4 h-4" />
-                    Platform
-                    </label>
-                    <select
-                    value={platform}
-                    onChange={(e) => setPlatform(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-purple-500 focus:border-purple-500"
-                    >
-                    <option value="instagram">Instagram</option>
-                    <option value="facebook">Facebook</option>
-                    <option value="twitter">Twitter</option>
-                    <option value="linkedin">LinkedIn</option>
-                    <option value="tiktok">TikTok</option>
-                    </select>
-                </div>
-
-                <div className="space-y-2">
-                    <label className="text-sm font-medium flex items-center gap-2">
-                    <ImageIcon className="w-4 h-4" />
-                    Resolution
-                    </label>
-                    <select
-                    value={resolution}
-                    onChange={(e) => setResolution(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-purple-500 focus:border-purple-500"
-                    >
-                    <option value="square">Square (1:1)</option>
-                    <option value="portrait">Portrait (9:16)</option>
-                    <option value="landscape">Landscape (16:9)</option>
-                    <option value="banner">Banner (3:1)</option>
-                    </select>
                 </div>
 
                 <div className="pt-4">
                     <Button
-                    onClick={handleGenerateImage}
+                    onClick={handleGenerateScript}
                     disabled={generating || !prompt.trim()}
                     className="w-full bg-purple-600 hover:bg-purple-700 text-white disabled:opacity-50"
                     >
@@ -298,7 +222,7 @@ export default function GenerateImagePage() {
                     ) : (
                         <>
                         <Wand2 className="w-4 h-4 mr-2" />
-                        Generate Image (5 Credits)
+                        Generate Script (2 Credits)
                         </>
                     )}
                     </Button>
@@ -306,89 +230,62 @@ export default function GenerateImagePage() {
                 </CardContent>
             </Card>
 
-            {/* Generated Image Display */}
+            {/* Generated Script Display */}
             <Card className="bg-white shadow-lg">
                 <CardHeader>
                 <CardTitle className="text-xl flex items-center gap-2">
-                    <ImageIcon className="w-5 h-5" />
-                    Generated Image
+                    <FileText className="w-5 h-5" />
+                    Generated Script
                 </CardTitle>
                 <CardDescription>
-                    Your AI-generated advertisement visual
+                    Your AI-generated script
                 </CardDescription>
                 </CardHeader>
                 <CardContent>
-                {generatedImage ? (
+                {generatedScript ? (
                     <div className="space-y-4">
-                    <div className="relative group">
-                        <img
-                        src={generatedImage.imageUrl}
-                        alt={generatedImage.prompt}
-                        className="w-full rounded-lg shadow-md"
-                        />
-                        <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Button
-                            size="sm"
-                            variant="secondary"
-                            className="h-8 w-8 p-0"
-                            onClick={() => downloadImage(generatedImage.imageUrl, `adcraft-${generatedImage._id}.png`)}
-                        >
-                            <Download className="w-4 h-4" />
-                        </Button>
-                        <Button
-                            size="sm"
-                            variant="secondary"
-                            className="h-8 w-8 p-0"
-                            onClick={() => copyToClipboard(generatedImage.prompt)}
-                        >
-                            {copiedPrompt ? (
-                            <Check className="w-4 h-4" />
-                            ) : (
-                            <Copy className="w-4 h-4" />
-                            )}
-                        </Button>
+                        <div className="prose prose-sm max-w-none whitespace-pre-wrap">
+                            {generatedScript.script}
                         </div>
-                    </div>
 
-                    <div className="space-y-2">
-                        <p className="text-sm text-gray-500 line-clamp-3">
-                        {generatedImage.prompt}
-                        </p>
                         <div className="flex justify-between items-center text-xs text-gray-500">
-                        <div className="flex items-center gap-1">
-                            <Calendar className="w-3 h-3" />
-                            {new Date(generatedImage.createdAt).toLocaleDateString()}
+                            <div className="flex items-center gap-1">
+                                <Calendar className="w-3 h-3" />
+                                {new Date(generatedScript.createdAt).toLocaleDateString()}
+                            </div>
+                            <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => copyToClipboard(generatedScript.script)}
+                            >
+                                {copiedPrompt ? (
+                                    <Check className="w-4 h-4 text-green-500" />
+                                ) : (
+                                    <Copy className="w-4 h-4" />
+                                )}
+                                Copy
+                            </Button>
                         </div>
-                        <div className="flex gap-1">
-                            <Badge variant="outline" className="border-purple-200 text-purple-600 bg-purple-50">
-                            {generatedImage.style}
-                            </Badge>
-                            <Badge variant="outline" className="border-purple-200 text-purple-600 bg-purple-50">
-                            {generatedImage.platform}
-                            </Badge>
-                        </div>
-                        </div>
-                    </div>
 
-                    <div className="pt-4 border-t">
-                        <Button
-                        onClick={() => setGeneratedImage(null)}
-                        variant="outline"
-                        className="w-full"
-                        >
-                        Generate Another Image
-                        </Button>
-                    </div>
+                        <div className="pt-4 border-t">
+                            <Button
+                            onClick={() => setGeneratedScript(null)}
+                            variant="outline"
+                            className="w-full"
+                            >
+                            Generate Another Script
+                            </Button>
+                        </div>
                     </div>
                 ) : (
                     <div className="flex flex-col items-center justify-center min-h-[300px] text-center">
-                    <ImageIcon className="w-16 h-16 text-gray-400 mb-4" />
-                    <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                        No Image Generated Yet
-                    </h3>
-                    <p className="text-sm text-gray-500">
-                        Fill out the form and click "Generate Image" to create your first AI-powered advertisement visual.
-                    </p>
+                        <FileText className="w-16 h-16 text-gray-400 mb-4" />
+                        <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                            No Script Generated Yet
+                        </h3>
+                        <p className="text-sm text-gray-500">
+                            Fill out the form and click "Generate Script" to create your first AI-powered script.
+                        </p>
                     </div>
                 )}
                 </CardContent>
@@ -398,7 +295,7 @@ export default function GenerateImagePage() {
 
         {selectedCampaign && (
         <div className="text-center text-sm text-gray-500">
-            Generating images for {selectedCampaign.name} • {selectedCampaign.credits} credits remaining
+            Generating scripts for {selectedCampaign.name} • {selectedCampaign.credits} credits remaining
         </div>
         )}
     </div>
