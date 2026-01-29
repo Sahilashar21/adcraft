@@ -12,21 +12,21 @@ const features = [
     icon: Sparkles, // Using Sparkles for image generation, as it's general AI
     title: "AI Image Generator",
     description: "Create stunning AI-powered images for your advertisements.",
-    href: "/dashboard/generate-image",
+    href: "/generate-image",
     color: "from-blue-500 to-teal-500"
   },
   {
     icon: Clapperboard,
     title: "AI Video Generator",
     description: "Produce dynamic video advertisements from images with AI.",
-    href: "/dashboard/generate-video",
+    href: "/generate-video",
     color: "from-green-500 to-lime-500"
   },
   {
     icon: PenSquare,
     title: "AI Script Generator",
     description: "Generate engaging advertisement scripts and dialogue.",
-    href: "/dashboard/generate-script",
+    href: "/generate-script",
     color: "from-yellow-500 to-orange-500"
   },
   {

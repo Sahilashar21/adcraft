@@ -77,6 +77,55 @@ export default function CampaignLibraryPage() {
     }
   };
 
+  const handleDownload = async (item) => {
+    try {
+      if (item.type === 'caption' || item.type === 'script') {
+        const blob = new Blob([item.content], { type: 'text/plain' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `adcraft-${item.type}-${item._id}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      } else {
+        const response = await fetch(item.content);
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `adcraft-${item.type}-${item._id}.${item.type === 'video' ? 'mp4' : 'png'}`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      }
+    } catch (err) {
+      console.error('Failed to download:', err);
+      alert('Failed to download asset');
+    }
+  };
+
+  const handleDelete = async (id, type) => {
+    if (!confirm('Are you sure you want to delete this item?')) return;
+
+    try {
+      const res = await fetch('/api/campaign-library', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, type }),
+      });
+
+      if (!res.ok) throw new Error('Failed to delete');
+
+      setItems(prev => prev.filter(item => item._id !== id));
+    } catch (err) {
+      console.error('Failed to delete:', err);
+      alert('Failed to delete item');
+    }
+  };
+
   return (
     <div className="space-y-8">
       <div>
@@ -187,10 +236,20 @@ export default function CampaignLibraryPage() {
             </CardContent>
 
             <CardFooter className="p-4 pt-0 flex gap-2 mt-auto">
-              <Button variant="outline" size="sm" className="flex-1 gap-2 hover:bg-gray-50">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="flex-1 gap-2 hover:bg-gray-50"
+                onClick={() => handleDownload(item)}
+              >
                 <Download className="w-4 h-4" /> Download
               </Button>
-              <Button variant="ghost" size="icon" className="text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+                onClick={() => handleDelete(item._id, item.type)}
+              >
                 <Trash2 className="w-4 h-4" />
               </Button>
             </CardFooter>
