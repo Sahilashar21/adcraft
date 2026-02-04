@@ -78,7 +78,14 @@ export default function GenerateVideoPage() {
       setPrompt('');
     } catch (err) {
       console.error('Failed to generate video:', err);
-      alert('Failed to generate video: ' + err.message);
+      
+      // Show user-friendly error message
+      let errorMessage = err.message;
+      if (errorMessage.includes('temporarily unavailable') || errorMessage.includes('service')) {
+        errorMessage += '\n\nThis is likely a temporary issue with the image generation service. Please try again in a few minutes.';
+      }
+      
+      alert('Failed to generate video:\n\n' + errorMessage);
     } finally {
       setGenerating(false);
     }

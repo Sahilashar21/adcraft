@@ -79,7 +79,14 @@ export default function GenerateImagePage() {
       setPrompt('');
     } catch (err) {
       console.error('Failed to generate image:', err);
-      alert('Failed to generate image: ' + err.message);
+      
+      // Show user-friendly error message
+      let errorMessage = err.message;
+      if (errorMessage.includes('temporarily unavailable') || errorMessage.includes('service')) {
+        errorMessage += '\n\nThis is likely a temporary issue with the image generation service. Please try again in a few minutes.';
+      }
+      
+      alert('Failed to generate image:\n\n' + errorMessage);
     } finally {
       setGenerating(false);
     }
