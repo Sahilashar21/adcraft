@@ -3,6 +3,58 @@ import { connectDB } from '@/lib/mongodb';
 import Campaign from '@/models/Campaign';
 import Image from '@/models/Image';
 
+// Configure route for longer execution time (60 seconds)
+export const maxDuration = 60;
+export const dynamic = 'force-dynamic';
+
+async function fetchPollinationsImage(prompt, { timeoutMs = 30000, retries = 2 } = {}) {
+  const pollUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}`;
+
+  let lastError;
+  for (let attempt = 0; attempt <= retries; attempt += 1) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+    try {
+      console.log(`Pollinations API attempt ${attempt + 1}/${retries + 1}...`);
+      
+      const imageRes = await fetch(pollUrl, {
+        signal: controller.signal,
+        cache: 'no-store',
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+        }
+      });
+
+      if (!imageRes.ok) {
+        const errorText = await imageRes.text().catch(() => 'No error details');
+        throw new Error(`Pollinations API error: ${imageRes.status} ${imageRes.statusText}`);
+      }
+
+      const arrayBuffer = await imageRes.arrayBuffer();
+      console.log(`✓ Successfully fetched image (${arrayBuffer.byteLength} bytes)`);
+      return Buffer.from(arrayBuffer);
+    } catch (error) {
+      lastError = error;
+      console.error(`Attempt ${attempt + 1} failed:`, error.message);
+      
+      if (attempt < retries) {
+        const delay = 1000 * (attempt + 1);
+        console.log(`Retrying in ${delay}ms...`);
+        await new Promise((resolve) => setTimeout(resolve, delay));
+      }
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  }
+
+  if (lastError?.name === 'AbortError') {
+    throw new Error('Pollinations API timeout. Please try again.');
+  }
+
+  throw lastError || new Error('Pollinations API error. Please try again.');
+}
+
 export async function POST(request) {
   try {
     await connectDB();
@@ -101,25 +153,9 @@ export async function POST(request) {
         break;
     }
 
-    // Generate image using Pollinations.ai (Free API)
-    // Using a random seed to ensure unique generations for the same prompt
-    const seed = Math.floor(Math.random() * 1000000);
-    const apiKey = process.env.POLLINATIONS_API_KEY;
-    
-    const pollUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(enhancedPrompt)}`;
-
-    const imageRes = await fetch(pollUrl, {
-      headers: apiKey ? { 'Authorization': `Bearer ${apiKey}` } : {},
-      cache: 'no-store'
-    });
-
-    if (!imageRes.ok) {
-      const errorText = await imageRes.text();
-      throw new Error(`Pollinations API error: ${imageRes.status} ${imageRes.statusText} - ${errorText}`);
-    }
-
-    const arrayBuffer = await imageRes.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
+    // Generate image using Pollinations.ai
+    console.log('Starting image generation for campaign:', campaignId);
+    const buffer = await fetchPollinationsImage(enhancedPrompt);
     const base64Image = buffer.toString('base64');
     const imageUrl = `data:image/jpeg;base64,${base64Image}`;
 
@@ -152,9 +188,27 @@ export async function POST(request) {
 
   } catch (error) {
     console.error('Image generation error:', error);
+    
+    // Determine appropriate status code
+    let status = 500;
+    let errorMessage = 'Internal server error';
+    
+    if (error?.message?.includes('Pollinations API')) {
+      status = 502;
+      errorMessage = 'Image API temporarily unavailable. Please try again in a moment.';
+    } else if (error?.message?.includes('timeout')) {
+      status = 504;
+      errorMessage = 'Request timeout. The image is taking too long to generate. Please try again.';
+    } else if (error?.name === 'AbortError') {
+      status = 504;
+      errorMessage = 'Request timeout. Please try again with a simpler prompt.';
+    } else if (error?.message) {
+      errorMessage = error.message;
+    }
+    
     return NextResponse.json(
-      { error: error.message || 'Internal server error' },
-      { status: 500 }
+      { error: errorMessage },
+      { status }
     );
   }
 }

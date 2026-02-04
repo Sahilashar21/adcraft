@@ -8,6 +8,58 @@ import path from 'path';
 import ffmpeg from 'fluent-ffmpeg';
 import ffmpegStatic from 'ffmpeg-static';
 
+// Configure route for longer execution time (5 minutes for video processing)
+export const maxDuration = 300;
+export const dynamic = 'force-dynamic';
+
+async function fetchPollinationsImage(prompt, { timeoutMs = 30000, retries = 2 } = {}) {
+  const pollUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}`;
+
+  let lastError;
+  for (let attempt = 0; attempt <= retries; attempt += 1) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+    try {
+      console.log(`Pollinations API attempt ${attempt + 1}/${retries + 1}...`);
+      
+      const imageRes = await fetch(pollUrl, {
+        signal: controller.signal,
+        cache: 'no-store',
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+        }
+      });
+
+      if (!imageRes.ok) {
+        const errorText = await imageRes.text().catch(() => 'No error details');
+        throw new Error(`Pollinations API error: ${imageRes.status} ${imageRes.statusText}`);
+      }
+
+      const arrayBuffer = await imageRes.arrayBuffer();
+      console.log(`✓ Successfully fetched image (${arrayBuffer.byteLength} bytes)`);
+      return Buffer.from(arrayBuffer);
+    } catch (error) {
+      lastError = error;
+      console.error(`Attempt ${attempt + 1} failed:`, error.message);
+      
+      if (attempt < retries) {
+        const delay = 1000 * (attempt + 1);
+        console.log(`Retrying in ${delay}ms...`);
+        await new Promise((resolve) => setTimeout(resolve, delay));
+      }
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  }
+
+  if (lastError?.name === 'AbortError') {
+    throw new Error('Pollinations API timeout. Please try again.');
+  }
+
+  throw lastError || new Error('Pollinations API error. Please try again.');
+}
+
 /* =========================================
    FFmpeg PATH FIX (WINDOWS + NEXT.JS SAFE)
 ========================================= */
@@ -128,12 +180,8 @@ export async function POST(request) {
     }
 
     /* ================= IMAGE GENERATION ================= */
-    const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(enhancedPrompt)}`;
-
-    const imageRes = await fetch(imageUrl, { cache: 'no-store' });
-    if (!imageRes.ok) throw new Error('Failed to generate image');
-
-    const imageBuffer = Buffer.from(await imageRes.arrayBuffer());
+    console.log('Starting image generation for video...');
+    const imageBuffer = await fetchPollinationsImage(enhancedPrompt);
 
     /* ================= TEMP FILES ================= */
     const tmpDir = path.join(process.cwd(), 'tmp');
@@ -145,7 +193,13 @@ export async function POST(request) {
     fs.writeFileSync(imagePath, imageBuffer);
 
     /* ================= IMAGE → VIDEO ================= */
+    console.log('Starting FFmpeg video processing...');
+    
     await new Promise((resolve, reject) => {
+      const ffmpegTimeout = setTimeout(() => {
+        reject(new Error('FFmpeg processing timeout after 60 seconds'));
+      }, 60000); // 1 minute timeout for video processing
+
       ffmpeg(imagePath)
         .loop(6)
         .videoFilters([
@@ -166,8 +220,24 @@ export async function POST(request) {
           '-movflags +faststart',
         ])
         .save(videoPath)
-        .on('end', resolve)
-        .on('error', reject);
+        .on('start', (cmd) => {
+          console.log('FFmpeg command:', cmd);
+        })
+        .on('progress', (progress) => {
+          if (progress.percent) {
+            console.log(`Processing: ${Math.round(progress.percent)}% done`);
+          }
+        })
+        .on('end', () => {
+          clearTimeout(ffmpegTimeout);
+          console.log('FFmpeg processing completed successfully');
+          resolve();
+        })
+        .on('error', (err) => {
+          clearTimeout(ffmpegTimeout);
+          console.error('FFmpeg error:', err);
+          reject(err);
+        });
     });
 
     const videoBuffer = fs.readFileSync(videoPath);
@@ -204,9 +274,47 @@ export async function POST(request) {
 
   } catch (error) {
     console.error('Video generation error:', error);
+    
+    // Clean up temp files if they exist
+    try {
+      const tmpDir = path.join(process.cwd(), 'tmp');
+      if (fs.existsSync(tmpDir)) {
+        const files = fs.readdirSync(tmpDir);
+        files.forEach(file => {
+          try {
+            fs.unlinkSync(path.join(tmpDir, file));
+          } catch (e) {
+            // Ignore cleanup errors
+          }
+        });
+      }
+    } catch (cleanupError) {
+      console.error('Cleanup error:', cleanupError);
+    }
+    
+    // Determine appropriate status code
+    let status = 500;
+    let errorMessage = 'Failed to generate video';
+    
+    if (error?.message?.includes('Pollinations API')) {
+      status = 502;
+      errorMessage = 'Image API temporarily unavailable. Please try again in a moment.';
+    } else if (error?.message?.includes('timeout')) {
+      status = 504;
+      errorMessage = 'Request timeout. Video generation is taking too long. Please try again.';
+    } else if (error?.name === 'AbortError') {
+      status = 504;
+      errorMessage = 'Request timeout. Please try again with a simpler prompt.';
+    } else if (error?.message?.includes('FFmpeg')) {
+      status = 500;
+      errorMessage = 'Video processing failed. Please try again or contact support.';
+    } else if (error?.message) {
+      errorMessage = error.message;
+    }
+    
     return NextResponse.json(
-      { error: error.message || 'Failed to generate video' },
-      { status: 500 }
+      { error: errorMessage },
+      { status }
     );
   }
 }
