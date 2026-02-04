@@ -100,7 +100,7 @@ export default function GenerateScriptPage() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 animate-fade-in">
         <div className="flex justify-between items-center">
         <div className="flex items-center gap-4">
             {selectedCampaign && (
@@ -112,13 +112,13 @@ export default function GenerateScriptPage() {
                 Back to Campaigns
             </Button>
             )}
-            <h2 className="text-3xl font-bold text-gray-800 flex items-center gap-3">
+            <h2 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent flex items-center gap-3">
                 <Wand2 className="w-8 h-8 text-purple-600" />
                 AI Script Generator
             </h2>
         </div>
         <Link href="/scripts">
-            <Button className="bg-purple-600 hover:bg-purple-700 text-white">
+            <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all px-6 py-6">
                 <FileText className="w-4 h-4 mr-2" /> View Scripts
             </Button>
         </Link>
@@ -127,9 +127,11 @@ export default function GenerateScriptPage() {
         {!selectedCampaign ? (
         // Campaign Selection View
         campaigns.length === 0 ? (
-            <div className="flex flex-1 items-center justify-center rounded-lg border-2 border-dashed border-gray-200 bg-white min-h-[400px]">
+            <div className="flex flex-1 items-center justify-center rounded-lg border-2 border-dashed border-purple-200 bg-white min-h-[400px]">
                 <div className="flex flex-col items-center gap-1 text-center">
-                    <Target className="w-16 h-16 text-gray-400 mb-4" />
+                    <div className="p-4 bg-gradient-to-br from-purple-100 to-pink-100 rounded-full mb-4">
+                      <Target className="w-16 h-16 text-purple-600" />
+                    </div>
                     <h3 className="text-2xl font-bold tracking-tight text-gray-800">
                     No campaigns found
                     </h3>
@@ -137,7 +139,7 @@ export default function GenerateScriptPage() {
                     Create your first campaign to start generating scripts.
                     </p>
                     <Link href="/campaigns/new">
-                    <Button className="mt-4 bg-purple-600 hover:bg-purple-700 text-white">
+                    <Button className="mt-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold shadow-lg">
                         <Target className="w-4 h-4 mr-2" /> Create Campaign
                     </Button>
                     </Link>
@@ -148,7 +150,7 @@ export default function GenerateScriptPage() {
             {campaigns.map((campaign) => (
                 <Card
                     key={campaign._id}
-                    className="bg-white shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer h-full"
+                    className="bg-white border-2 border-gray-200 hover:border-purple-400 hover:shadow-2xl transition-all duration-300 cursor-pointer h-full"
                     onClick={() => handleCampaignSelect(campaign)}
                 >
                     <CardHeader>
@@ -170,7 +172,7 @@ export default function GenerateScriptPage() {
                         </div>
                     </div>
                     <Button 
-                        className="w-full mt-4 bg-purple-600 hover:bg-purple-700 text-white" 
+                        className="w-full mt-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold" 
                         size="sm"
                     >
                         Generate Scripts
@@ -184,7 +186,7 @@ export default function GenerateScriptPage() {
         // Script Generation View
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Generation Form */}
-            <Card className="bg-white shadow-lg">
+            <Card className="bg-white border-2 border-purple-100 shadow-lg">
                 <CardHeader>
                 <CardTitle className="text-xl flex items-center gap-2">
                     <Wand2 className="w-5 h-5" />
@@ -212,7 +214,7 @@ export default function GenerateScriptPage() {
                     <Button
                     onClick={handleGenerateScript}
                     disabled={generating || !prompt.trim()}
-                    className="w-full bg-purple-600 hover:bg-purple-700 text-white disabled:opacity-50"
+                    className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white disabled:opacity-50 font-semibold"
                     >
                     {generating ? (
                         <>
@@ -231,7 +233,7 @@ export default function GenerateScriptPage() {
             </Card>
 
             {/* Generated Script Display */}
-            <Card className="bg-white shadow-lg">
+            <Card className="bg-white border-2 border-purple-100 shadow-lg">
                 <CardHeader>
                 <CardTitle className="text-xl flex items-center gap-2">
                     <FileText className="w-5 h-5" />
@@ -294,7 +296,7 @@ export default function GenerateScriptPage() {
         )}
 
         {selectedCampaign && (
-        <div className="text-center text-sm text-gray-500">
+        <div className="text-center text-sm text-gray-600 bg-gradient-to-r from-purple-50 to-pink-50 p-4 rounded-xl border border-purple-200 font-semibold">
             Generating scripts for {selectedCampaign.name} • {selectedCampaign.credits} credits remaining
         </div>
         )}

@@ -3,6 +3,43 @@ import { connectDB } from '@/lib/mongodb';
 import Campaign from '@/models/Campaign';
 import Image from '@/models/Image';
 
+async function fetchPollinationsImage(prompt, { timeoutMs = 20000, retries = 2 } = {}) {
+  const pollUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}`;
+
+  let lastError;
+  for (let attempt = 0; attempt <= retries; attempt += 1) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+    try {
+      const imageRes = await fetch(pollUrl, {
+        signal: controller.signal,
+        cache: 'no-store'
+      });
+
+      if (!imageRes.ok) {
+        const errorText = await imageRes.text();
+        throw new Error(`Pollinations API error: ${imageRes.status} ${imageRes.statusText} - ${errorText}`);
+      }
+
+      const arrayBuffer = await imageRes.arrayBuffer();
+      return Buffer.from(arrayBuffer);
+    } catch (error) {
+      lastError = error;
+      if (attempt === retries) break;
+      await new Promise((resolve) => setTimeout(resolve, 800 * (attempt + 1)));
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  }
+
+  if (lastError?.name === 'AbortError') {
+    throw new Error('Pollinations API timeout. Please try again.');
+  }
+
+  throw lastError || new Error('Pollinations API error. Please try again.');
+}
+
 export async function POST(request) {
   try {
     await connectDB();
@@ -106,20 +143,7 @@ export async function POST(request) {
     const seed = Math.floor(Math.random() * 1000000);
     const apiKey = process.env.POLLINATIONS_API_KEY;
     
-    const pollUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(enhancedPrompt)}`;
-
-    const imageRes = await fetch(pollUrl, {
-      headers: apiKey ? { 'Authorization': `Bearer ${apiKey}` } : {},
-      cache: 'no-store'
-    });
-
-    if (!imageRes.ok) {
-      const errorText = await imageRes.text();
-      throw new Error(`Pollinations API error: ${imageRes.status} ${imageRes.statusText} - ${errorText}`);
-    }
-
-    const arrayBuffer = await imageRes.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
+    const buffer = await fetchPollinationsImage(enhancedPrompt, { timeoutMs: 20000, retries: 2 });
     const base64Image = buffer.toString('base64');
     const imageUrl = `data:image/jpeg;base64,${base64Image}`;
 
@@ -152,9 +176,10 @@ export async function POST(request) {
 
   } catch (error) {
     console.error('Image generation error:', error);
+    const status = error?.message?.includes('Pollinations API') ? 502 : 500;
     return NextResponse.json(
       { error: error.message || 'Internal server error' },
-      { status: 500 }
+      { status }
     );
   }
 }

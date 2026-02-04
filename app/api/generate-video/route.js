@@ -8,6 +8,43 @@ import path from 'path';
 import ffmpeg from 'fluent-ffmpeg';
 import ffmpegStatic from 'ffmpeg-static';
 
+async function fetchPollinationsImage(prompt, { timeoutMs = 20000, retries = 2 } = {}) {
+  const pollUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}`;
+
+  let lastError;
+  for (let attempt = 0; attempt <= retries; attempt += 1) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+    try {
+      const imageRes = await fetch(pollUrl, {
+        signal: controller.signal,
+        cache: 'no-store'
+      });
+
+      if (!imageRes.ok) {
+        const errorText = await imageRes.text();
+        throw new Error(`Pollinations API error: ${imageRes.status} ${imageRes.statusText} - ${errorText}`);
+      }
+
+      const arrayBuffer = await imageRes.arrayBuffer();
+      return Buffer.from(arrayBuffer);
+    } catch (error) {
+      lastError = error;
+      if (attempt === retries) break;
+      await new Promise((resolve) => setTimeout(resolve, 800 * (attempt + 1)));
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  }
+
+  if (lastError?.name === 'AbortError') {
+    throw new Error('Pollinations API timeout. Please try again.');
+  }
+
+  throw lastError || new Error('Pollinations API error. Please try again.');
+}
+
 /* =========================================
    FFmpeg PATH FIX (WINDOWS + NEXT.JS SAFE)
 ========================================= */
@@ -128,12 +165,7 @@ export async function POST(request) {
     }
 
     /* ================= IMAGE GENERATION ================= */
-    const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(enhancedPrompt)}`;
-
-    const imageRes = await fetch(imageUrl, { cache: 'no-store' });
-    if (!imageRes.ok) throw new Error('Failed to generate image');
-
-    const imageBuffer = Buffer.from(await imageRes.arrayBuffer());
+    const imageBuffer = await fetchPollinationsImage(enhancedPrompt, { timeoutMs: 20000, retries: 2 });
 
     /* ================= TEMP FILES ================= */
     const tmpDir = path.join(process.cwd(), 'tmp');
@@ -204,9 +236,10 @@ export async function POST(request) {
 
   } catch (error) {
     console.error('Video generation error:', error);
+    const status = error?.message?.includes('Pollinations API') ? 502 : 500;
     return NextResponse.json(
       { error: error.message || 'Failed to generate video' },
-      { status: 500 }
+      { status }
     );
   }
 }

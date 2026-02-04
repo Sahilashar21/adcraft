@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 
 const features = [
   {
-    icon: Sparkles, // Using Sparkles for image generation, as it's general AI
+    icon: Sparkles,
     title: "AI Image Generator",
     description: "Create stunning AI-powered images for your advertisements.",
     href: "/generate-image",
