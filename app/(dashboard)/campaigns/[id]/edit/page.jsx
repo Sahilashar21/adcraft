@@ -58,17 +58,17 @@ export default function EditPage() {
     <div className="flex items-center justify-center h-full">
       <div className="text-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto mb-4"></div>
-        <p className="text-lg text-gray-600">Loading...</p>
+        <p className="text-lg text-gray-600 dark:text-gray-300">Loading...</p>
       </div>
     </div>
   );
 
   if (error === "not-found" || !campaign) {
     return (
-        <div className="flex flex-1 items-center justify-center rounded-lg border-2 border-dashed border-gray-200 bg-white min-h-[400px]">
+      <div className="flex flex-1 items-center justify-center rounded-lg border-2 border-dashed border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-800 min-h-[400px]">
         <div className="flex flex-col items-center gap-1 text-center">
-          <p className="text-2xl font-bold tracking-tight text-gray-800">Campaign not found</p>
-          <p className="text-sm text-gray-500">The campaign you're looking for doesn't exist.</p>
+          <p className="text-2xl font-bold tracking-tight text-gray-900 dark:text-gray-200">Campaign not found</p>
+          <p className="text-sm text-gray-600 dark:text-gray-400">The campaign you're looking for doesn't exist.</p>
         </div>
       </div>
     );
@@ -76,20 +76,20 @@ export default function EditPage() {
 
   if (error) {
     return (
-        <div className="flex flex-1 items-center justify-center rounded-lg border-2 border-dashed border-red-400 bg-red-50 min-h-[400px]">
+      <div className="flex flex-1 items-center justify-center rounded-lg border-2 border-dashed border-red-400 bg-red-50 dark:bg-red-900/30 min-h-[400px]">
         <div className="flex flex-col items-center gap-1 text-center">
-          <p className="text-2xl font-bold tracking-tight text-red-700">Error loading campaign</p>
-          <p className="text-sm text-red-600">Please try again later.</p>
+          <p className="text-2xl font-bold tracking-tight text-red-700 dark:text-red-200">Error loading campaign</p>
+          <p className="text-sm text-red-600 dark:text-red-300">Please try again later.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <Card className="max-w-2xl mx-auto bg-white shadow-lg">
+    <Card className="max-w-2xl mx-auto bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 shadow-lg">
       <CardHeader>
-        <CardTitle className="text-2xl text-gray-800">Edit Campaign</CardTitle>
-        <CardDescription>Update the details of your campaign.</CardDescription>
+        <CardTitle className="text-2xl text-gray-900 dark:text-white">Edit Campaign</CardTitle>
+        <CardDescription className="text-gray-600 dark:text-gray-300">Update the details of your campaign.</CardDescription>
       </CardHeader>
       <CardContent>
         <EditForm campaign={campaign} />

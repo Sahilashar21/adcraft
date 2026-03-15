@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Gem } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Chatbot from '@/components/Chatbot';
+import DarkModeToggle from '@/components/DarkModeToggle';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -27,16 +28,19 @@ export default function HomeLayout({
         <div className="glow-orb orb-1" />
         <div className="glow-orb orb-2" />
       </div>
-      <header className="relative z-10 flex h-16 items-center justify-between border-b border-purple-100 bg-white/70 backdrop-blur-xl px-4 lg:px-6 shadow-lg">
+      <header className="relative z-10 flex h-16 items-center justify-between border-b border-purple-100 dark:border-purple-900 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl px-4 lg:px-6 shadow-lg dark:shadow-slate-900/70">
         <Link href="/" className="flex items-center gap-2 font-semibold">
           <Gem className="w-6 h-6 text-purple-600" />
           <span className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">AdCraft</span>
         </Link>
-        <Link href="/dashboard">
-          <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg">
-            Go to Dashboard
-          </Button>
-        </Link>
+        <div className="flex items-center gap-4">
+          <DarkModeToggle />
+          <Link href="/dashboard">
+            <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg">
+              Go to Dashboard
+            </Button>
+          </Link>
+        </div>
       </header>
       <div className="relative z-10">
         {children}

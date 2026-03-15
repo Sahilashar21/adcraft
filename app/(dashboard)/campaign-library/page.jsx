@@ -10,10 +10,10 @@ import { Badge } from '@/components/ui/badge';
 import { motion } from 'framer-motion';
 
 const typeColors = {
-  image: { bg: 'bg-gradient-to-br from-blue-50 to-cyan-50', border: 'border-blue-300', text: 'text-blue-800', badge: 'border-blue-300 text-blue-800 bg-blue-100', glow: 'from-blue-400 to-cyan-400' },
-  video: { bg: 'bg-gradient-to-br from-pink-50 to-purple-50', border: 'border-pink-300', text: 'text-pink-800', badge: 'border-pink-300 text-pink-800 bg-pink-100', glow: 'from-pink-400 to-purple-400' },
-  script: { bg: 'bg-gradient-to-br from-indigo-50 to-purple-50', border: 'border-indigo-300', text: 'text-indigo-800', badge: 'border-indigo-300 text-indigo-800 bg-indigo-100', glow: 'from-indigo-400 to-purple-400' },
-  caption: { bg: 'bg-gradient-to-br from-purple-50 to-pink-50', border: 'border-purple-300', text: 'text-purple-800', badge: 'border-purple-300 text-purple-800 bg-purple-100', glow: 'from-purple-400 to-pink-400' },
+  image: { bg: 'bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-slate-900 dark:to-slate-800', border: 'border-blue-300 dark:border-slate-700', text: 'text-blue-800 dark:text-white', badge: 'border-blue-300 dark:border-slate-600 text-blue-800 dark:text-slate-100 bg-blue-100 dark:bg-slate-700', glow: 'from-blue-400 to-cyan-400' },
+  video: { bg: 'bg-gradient-to-br from-pink-50 to-purple-50 dark:from-slate-900 dark:to-slate-800', border: 'border-pink-300 dark:border-slate-700', text: 'text-pink-800 dark:text-white', badge: 'border-pink-300 dark:border-slate-600 text-pink-800 dark:text-slate-100 bg-pink-100 dark:bg-slate-700', glow: 'from-pink-400 to-purple-400' },
+  script: { bg: 'bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-slate-900 dark:to-slate-800', border: 'border-indigo-300 dark:border-slate-700', text: 'text-indigo-800 dark:text-white', badge: 'border-indigo-300 dark:border-slate-600 text-indigo-800 dark:text-slate-100 bg-indigo-100 dark:bg-slate-700', glow: 'from-indigo-400 to-purple-400' },
+  caption: { bg: 'bg-gradient-to-br from-purple-50 to-pink-50 dark:from-slate-900 dark:to-slate-800', border: 'border-purple-300 dark:border-slate-700', text: 'text-purple-800 dark:text-white', badge: 'border-purple-300 dark:border-slate-600 text-purple-800 dark:text-slate-100 bg-purple-100 dark:bg-slate-700', glow: 'from-purple-400 to-pink-400' },
 };
 
 export default function CampaignLibraryPage() {
@@ -131,17 +131,17 @@ export default function CampaignLibraryPage() {
           <Library className="w-9 h-9 text-purple-600" />
           Campaign Library
         </h1>
-        <p className="text-slate-600 mt-2 text-base">
+        <p className="text-slate-600 dark:text-slate-400 mt-2 text-base">
           Manage and organize all your generated content in one place.
         </p>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-white/80 backdrop-blur-sm p-5 rounded-2xl border-2 border-slate-200 shadow-lg hover:shadow-xl transition-all duration-300">
+      <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm p-5 rounded-2xl border-2 border-slate-200 dark:border-slate-700 shadow-lg hover:shadow-xl transition-all duration-300">
         <div className="relative w-full md:w-96">
-          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
+          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 dark:text-slate-500 w-5 h-5" />
           <Input 
             placeholder="Search content or campaigns..." 
-            className="pl-12 py-6 text-base border-slate-300 focus:border-purple-500 focus:ring-purple-500 rounded-xl transition-all duration-300"
+            className="pl-12 py-6 text-base border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-purple-500 focus:ring-purple-500 rounded-xl transition-all duration-300"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -149,7 +149,7 @@ export default function CampaignLibraryPage() {
         
         <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
           <Select value={selectedType} onValueChange={setSelectedType}>
-            <SelectTrigger className="w-full sm:w-[200px] border-slate-300 focus:border-purple-500 focus:ring-purple-500 py-6 rounded-xl font-semibold transition-all duration-300">
+            <SelectTrigger className="w-full sm:w-[200px] border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:border-purple-500 focus:ring-purple-500 py-6 rounded-xl font-semibold transition-all duration-300">
               <div className="flex items-center gap-2">
                 <Filter className="w-4 h-4" />
                 <SelectValue placeholder="Filter by Type" />
@@ -165,7 +165,7 @@ export default function CampaignLibraryPage() {
           </Select>
 
           <Select value={selectedCampaign} onValueChange={setSelectedCampaign}>
-            <SelectTrigger className="w-full sm:w-[180px] border-slate-300 focus:border-purple-500 focus:ring-purple-500">
+            <SelectTrigger className="w-full sm:w-[180px] border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:border-purple-500 focus:ring-purple-500">
               <SelectValue placeholder="Filter by Campaign" />
             </SelectTrigger>
             <SelectContent>
@@ -181,7 +181,7 @@ export default function CampaignLibraryPage() {
 
       {loading ? (
         <div className="flex justify-center py-20">
-          <div className="animate-spin rounded-full h-12 w-12 border-2 border-slate-200 border-t-indigo-600"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-2 border-slate-200 dark:border-slate-700 border-t-indigo-600"></div>
         </div>
       ) : (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -194,26 +194,26 @@ export default function CampaignLibraryPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
             >
-              <Card className={`bg-white border-slate-200 hover:border-slate-300 hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col h-full`}>
+              <Card className={`bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-slate-300 hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col h-full`}>
                 <CardHeader className="pb-3">
                   <div className="flex justify-between items-start mb-2">
                     <Badge variant="outline" className={`flex items-center gap-1 text-xs font-semibold ${colors.badge}`}>
                       {getTypeIcon(item.type)}
                       <span className="capitalize">{item.type}</span>
                     </Badge>
-                    <div className="text-xs text-slate-500 flex items-center gap-1">
+                    <div className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1">
                       <Calendar className="w-3 h-3" />
                       {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : 'N/A'}
                     </div>
                   </div>
-                  <CardTitle className="text-sm font-semibold text-slate-900 line-clamp-1" title={item.campaignName}>
+                  <CardTitle className="text-sm font-semibold text-slate-900 dark:text-slate-100 line-clamp-1" title={item.campaignName}>
                     {item.campaignName}
                   </CardTitle>
                 </CardHeader>
                 
                 <CardContent className="flex-grow pb-3">
                   {item.type === 'image' && (
-                    <div className="aspect-square rounded-lg overflow-hidden bg-slate-100 relative group/image border border-slate-200">
+                    <div className="aspect-square rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-900 relative group/image border border-slate-200 dark:border-slate-700">
                       <img src={item.content} alt={item.prompt} className="w-full h-full object-cover transition-transform duration-300 group-hover/image:scale-105" />
                       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/image:opacity-100 transition-opacity flex items-center justify-center">
                         <Button variant="secondary" size="sm" className="gap-2">
@@ -224,20 +224,20 @@ export default function CampaignLibraryPage() {
                   )}
                   
                   {item.type === 'video' && (
-                    <div className="aspect-video rounded-lg overflow-hidden bg-slate-100 relative group/video border border-slate-200">
+                    <div className="aspect-video rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-900 relative group/video border border-slate-200 dark:border-slate-700">
                       <video src={item.content} className="w-full h-full object-cover" controls />
                     </div>
                   )}
 
                   {(item.type === 'caption' || item.type === 'script') && (
-                    <div className="bg-slate-50 p-3 rounded-lg h-40 overflow-y-auto text-sm text-slate-700 whitespace-pre-wrap border border-slate-200">
+                    <div className="bg-slate-50 dark:bg-slate-900 p-3 rounded-lg h-40 overflow-y-auto text-sm text-slate-700 dark:text-slate-200 whitespace-pre-wrap border border-slate-200 dark:border-slate-700">
                       {item.content}
                     </div>
                   )}
                   
                   {item.prompt && (
-                    <div className="mt-3 bg-slate-50 p-2 rounded text-xs text-slate-600 border border-slate-200">
-                      <span className="font-semibold text-slate-700">Prompt:</span> <span className="line-clamp-2">{item.prompt}</span>
+                    <div className="mt-3 bg-slate-50 dark:bg-slate-900 p-2 rounded text-xs text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                      <span className="font-semibold text-slate-700 dark:text-slate-200">Prompt:</span> <span className="line-clamp-2">{item.prompt}</span>
                     </div>
                   )}
                 </CardContent>
@@ -246,7 +246,7 @@ export default function CampaignLibraryPage() {
                   <Button 
                     variant="outline" 
                     size="sm" 
-                    className="flex-1 gap-2 border-slate-300 text-slate-700 hover:bg-slate-50"
+                    className="flex-1 gap-2 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700"
                     onClick={() => handleDownload(item)}
                   >
                     <Download className="w-4 h-4" /> Download
@@ -254,7 +254,7 @@ export default function CampaignLibraryPage() {
                   <Button 
                     variant="ghost" 
                     size="icon" 
-                    className="text-slate-500 hover:text-red-600 hover:bg-red-50 transition-colors"
+                    className="text-slate-500 dark:text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors"
                     onClick={() => handleDelete(item._id, item.type)}
                   >
                     <Trash2 className="w-4 h-4" />
@@ -268,15 +268,15 @@ export default function CampaignLibraryPage() {
       )}
 
       {!loading && filteredItems.length === 0 && (
-        <div className="text-center py-20 bg-white rounded-xl border border-slate-200">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-slate-100 rounded-full mb-4">
-            <Library className="w-8 h-8 text-slate-400" />
+        <div className="text-center py-20 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-slate-100 dark:bg-slate-900 rounded-full mb-4">
+            <Library className="w-8 h-8 text-slate-400 dark:text-slate-500" />
           </div>
-          <h3 className="text-lg font-semibold text-slate-900">No items found</h3>
-          <p className="text-slate-600 mt-1">Try adjusting your filters or search query.</p>
+          <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">No items found</h3>
+          <p className="text-slate-600 dark:text-slate-400 mt-1">Try adjusting your filters or search query.</p>
           <Button 
             variant="outline"
-            className="mt-4 border-slate-300 text-slate-700 hover:bg-slate-50 font-medium"
+            className="mt-4 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 font-medium"
             onClick={() => {
               setSearchTerm('');
               setSelectedType('all');

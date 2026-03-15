@@ -175,6 +175,8 @@ export async function POST(request) {
         break;
     }
 
+    enhancedPrompt += ', no text, no words, no letters, no typography, no watermark, no logo text, no signage, no captions, no titles, no numbers, no posters, no banners, no labels, no billboards, no brand marks, empty walls, clean background';
+
     // Generate image using Flux via Pollinations
     console.log('Starting Flux image generation for campaign:', campaignId);
     const buffer = await generateFluxImage(enhancedPrompt, {

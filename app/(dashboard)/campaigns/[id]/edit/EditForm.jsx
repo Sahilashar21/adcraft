@@ -106,37 +106,41 @@ export default function EditForm({ campaign }) {
 
   return (
     <form onSubmit={onSubmit} className="space-y-6">
-      {error && <div className="text-red-600 font-medium bg-red-50 border border-red-200 rounded-md p-3">{error}</div>}
+      {error && (
+        <div className="text-red-600 dark:text-red-200 font-medium bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-md p-3">
+          {error}
+        </div>
+      )}
 
       <div className="space-y-2">
-        <Label htmlFor="name">Name</Label>
-        <Input id="name" name="name" defaultValue={campaign.name || ""} />
+        <Label htmlFor="name" className="text-gray-700 dark:text-gray-300">Name</Label>
+        <Input id="name" name="name" defaultValue={campaign.name || ""} className="bg-white dark:bg-slate-900 text-gray-900 dark:text-gray-100" />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
-          <Label htmlFor="businessName">Business Name</Label>
-          <Input id="businessName" name="businessName" defaultValue={campaign.businessName || ""} />
+          <Label htmlFor="businessName" className="text-gray-700 dark:text-gray-300">Business Name</Label>
+          <Input id="businessName" name="businessName" defaultValue={campaign.businessName || ""} className="bg-white dark:bg-slate-900 text-gray-900 dark:text-gray-100" />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="businessType">Business Type</Label>
-          <Input id="businessType" name="businessType" defaultValue={campaign.businessType || ""} />
+          <Label htmlFor="businessType" className="text-gray-700 dark:text-gray-300">Business Type</Label>
+          <Input id="businessType" name="businessType" defaultValue={campaign.businessType || ""} className="bg-white dark:bg-slate-900 text-gray-900 dark:text-gray-100" />
         </div>
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="description">Description</Label>
-        <Textarea id="description" name="description" defaultValue={campaign.description || ""} />
+        <Label htmlFor="description" className="text-gray-700 dark:text-gray-300">Description</Label>
+        <Textarea id="description" name="description" defaultValue={campaign.description || ""} className="bg-white dark:bg-slate-900 text-gray-900 dark:text-gray-100" />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="objective">Objective</Label>
-        <Input id="objective" name="objective" defaultValue={campaign.objective || ""} />
+        <Label htmlFor="objective" className="text-gray-700 dark:text-gray-300">Objective</Label>
+        <Input id="objective" name="objective" defaultValue={campaign.objective || ""} className="bg-white dark:bg-slate-900 text-gray-900 dark:text-gray-100" />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
         <div className="space-y-2">
-          <Label htmlFor="addBudget">Add Credits (₹)</Label>
+          <Label htmlFor="addBudget" className="text-gray-700 dark:text-gray-300">Add Credits (₹)</Label>
           <Input
             id="addBudget"
             name="addBudget"
@@ -147,13 +151,14 @@ export default function EditForm({ campaign }) {
               setAddBudget(e.target.value);
               setAdditionalCredits(calcCredits(e.target.value));
             }}
+            className="bg-white dark:bg-slate-900 text-gray-900 dark:text-gray-100"
           />
         </div>
         <div className="space-y-2">
           {addBudget !== "" && (
-            <div className="p-3 bg-gradient-to-r from-purple-50 to-pink-50 border-2 border-purple-200 rounded-lg">
-              <p className="text-sm font-medium text-purple-700">
-                Credits to Add: <span className="font-bold text-purple-800 text-lg">{additionalCredits}</span>
+            <div className="p-3 bg-gradient-to-r from-purple-50 dark:from-purple-900/30 to-pink-50 dark:to-pink-900/30 border-2 border-purple-200 dark:border-purple-800 rounded-lg">
+              <p className="text-sm font-medium text-purple-700 dark:text-purple-300">
+                Credits to Add: <span className="font-bold text-purple-800 dark:text-purple-200 text-lg">{additionalCredits}</span>
               </p>
             </div>
           )}
@@ -161,23 +166,23 @@ export default function EditForm({ campaign }) {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="targetAudience">Target Audience</Label>
-        <Textarea id="targetAudience" name="targetAudience" defaultValue={campaign.targetAudience || ""} />
+        <Label htmlFor="targetAudience" className="text-gray-700 dark:text-gray-300">Target Audience</Label>
+        <Textarea id="targetAudience" name="targetAudience" defaultValue={campaign.targetAudience || ""} className="bg-white dark:bg-slate-900 text-gray-900 dark:text-gray-100" />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="tone">Tone</Label>
-        <Input id="tone" name="tone" defaultValue={campaign.tone || ""} />
+        <Label htmlFor="tone" className="text-gray-700 dark:text-gray-300">Tone</Label>
+        <Input id="tone" name="tone" defaultValue={campaign.tone || ""} className="bg-white dark:bg-slate-900 text-gray-900 dark:text-gray-100" />
       </div>
 
       {addBudget && Number(addBudget) > 0 ? (
         <div className="space-y-3">
-          <div className="p-4 bg-gradient-to-r from-purple-50 to-pink-50 border-2 border-purple-300 rounded-lg">
-            <h3 className="font-semibold text-purple-800 mb-2">Payment Required</h3>
-            <p className="text-sm text-purple-700 mb-1">
+          <div className="p-4 bg-gradient-to-r from-purple-50 dark:from-purple-900/30 to-pink-50 dark:to-pink-900/30 border-2 border-purple-300 dark:border-purple-800 rounded-lg">
+            <h3 className="font-semibold text-purple-800 dark:text-purple-200 mb-2">Payment Required</h3>
+            <p className="text-sm text-purple-700 dark:text-purple-300 mb-1">
               You're adding <strong>₹{addBudget}</strong> to get <strong>{additionalCredits} credits</strong>
             </p>
-            <p className="text-xs text-purple-600">
+            <p className="text-xs text-purple-600 dark:text-purple-300">
               Total credits after payment: <strong>{(campaign.credits || 0) + additionalCredits}</strong>
             </p>
           </div>

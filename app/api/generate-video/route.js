@@ -210,6 +210,8 @@ export async function POST(request) {
         break;
     }
 
+    enhancedPrompt += ', no text, no words, no letters, no typography, no watermark, no logo text, no signage, no captions, no titles, no numbers, no posters, no banners, no labels, no billboards, no brand marks, empty walls, clean background';
+
     /* ================= IMAGE GENERATION ================= */
     console.log('Starting Flux image generation for video...');
     const imageBuffer = await generateFluxImage(enhancedPrompt, {

@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Gem, BarChart3, FileText, Zap, Star, Sparkles, Home, Library, Clapperboard, PenSquare, User, Bell } from 'lucide-react';
 import { motion } from "framer-motion";
 import Chatbot from '@/components/Chatbot';
+import DarkModeToggle from '@/components/DarkModeToggle';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,7 +27,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className={`min-h-screen relative overflow-hidden bg-gradient-to-br from-slate-50 via-white to-purple-50 ${inter.className}`}>
+    <div className={`min-h-screen relative overflow-hidden bg-gradient-to-br from-slate-50 via-white to-purple-50 dark:from-slate-950 dark:via-slate-900 dark:to-purple-950 ${inter.className}`}>
       {/* Background Effects */}
       <div className="pointer-events-none absolute inset-0">
         <div className="aurora-bg" />
@@ -36,7 +37,7 @@ export default function DashboardLayout({
         <div className="glow-orb orb-3" />
       </div>
       {/* Top Navigation Bar */}
-      <header className="relative z-10 bg-white/70 backdrop-blur-xl border-b border-purple-100 shadow-lg">
+      <header className="relative z-10 bg-white/70 dark:bg-slate-800/70 backdrop-blur-xl border-b border-purple-100 dark:border-purple-900/30 shadow-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between">
             {/* Logo */}
@@ -47,7 +48,7 @@ export default function DashboardLayout({
               >
                 <Gem className="w-6 h-6 text-white" />
               </motion.div>
-              <span className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">AdCraft</span>
+              <span className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent dark:from-purple-400 dark:to-pink-400">AdCraft</span>
             </Link>
 
             {/* Navigation */}
@@ -58,7 +59,7 @@ export default function DashboardLayout({
                   <Link key={item.href} href={item.href}>
                     <Button 
                       variant="ghost" 
-                      className="text-gray-700 hover:text-purple-600 hover:bg-purple-50 font-medium transition-all"
+                      className="text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 font-medium transition-all"
                     >
                       <Icon className="w-4 h-4 mr-2" />
                       {item.label}
@@ -70,10 +71,11 @@ export default function DashboardLayout({
 
             {/* Right side actions */}
             <div className="flex items-center gap-3">
-              <Button variant="ghost" size="icon" className="text-gray-600 hover:text-purple-600 hover:bg-purple-50">
+              <DarkModeToggle />
+              <Button variant="ghost" size="icon" className="text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20">
                 <Bell className="w-5 h-5" />
               </Button>
-              <Button variant="ghost" size="icon" className="text-gray-600 hover:text-purple-600 hover:bg-purple-50">
+              <Button variant="ghost" size="icon" className="text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20">
                 <User className="w-5 h-5" />
               </Button>
             </div>

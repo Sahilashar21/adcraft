@@ -5,8 +5,11 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ImageIcon, Calendar, Download, Copy, Check, ArrowLeft, Target, Building, Sparkles, Palette, Monitor, Wand2, Zap } from "lucide-react";
+import { ImageIcon, Calendar, Download, Copy, Check, ArrowLeft, Target, Building, Sparkles, Palette, Monitor, Wand2, RefreshCw, Zap } from "lucide-react";
 import { motion } from "framer-motion";
+import { DownloadExportButtons } from "@/components/DownloadExport";
+import RecentGenerations from "@/components/RecentGenerations";
+import { GeneratingImage } from "@/components/LoadingStates";
 
 export default function GenerateImagePage() {
   const [campaigns, setCampaigns] = useState([]);
@@ -15,6 +18,8 @@ export default function GenerateImagePage() {
   const [generating, setGenerating] = useState(false);
   const [generatedImage, setGeneratedImage] = useState(null);
   const [copiedPrompt, setCopiedPrompt] = useState(false);
+  const [regenerating, setRegenerating] = useState(false);
+  const [promptGenerating, setPromptGenerating] = useState(false);
 
   // Form state for image generation
   const [prompt, setPrompt] = useState('');
@@ -46,6 +51,37 @@ export default function GenerateImagePage() {
     setSelectedCampaign(null);
     setGeneratedImage(null);
     setPrompt('');
+  };
+
+  const handleGeneratePrompt = async () => {
+    if (!selectedCampaign) return;
+    setPromptGenerating(true);
+    try {
+      const res = await fetch('/api/generate-prompt', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          campaignId: selectedCampaign._id,
+          type: 'image',
+          style,
+          platform,
+          resolution,
+          userPrompt: prompt
+        })
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data?.error || 'Failed to generate prompt');
+      }
+
+      setPrompt(data.prompt || '');
+    } catch (err) {
+      console.error('Failed to generate prompt:', err);
+      alert('Failed to generate prompt. Please try again.');
+    } finally {
+      setPromptGenerating(false);
+    }
   };
 
   const handleGenerateImage = async () => {
@@ -119,6 +155,26 @@ export default function GenerateImagePage() {
     }
   };
 
+  const handleRegenerateImage = async () => {
+    if (!generatedImage?._id) return;
+    setRegenerating(true);
+    try {
+      const res = await fetch(`/api/images/${generatedImage._id}/regenerate`, {
+        method: 'POST'
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data?.error || 'Failed to regenerate image');
+      }
+      setGeneratedImage(data);
+    } catch (err) {
+      console.error('Failed to regenerate image:', err);
+      alert('Failed to regenerate image. Please try again.');
+    } finally {
+      setRegenerating(false);
+    }
+  };
+
   if (loading) {
     return (
         <div className="flex items-center justify-center h-full">
@@ -140,7 +196,7 @@ export default function GenerateImagePage() {
               <Button
                   variant="outline"
                   onClick={handleBackToCampaigns}
-                  className="border-slate-300 text-slate-700 hover:bg-purple-50 hover:border-purple-300 font-semibold"
+                  className="border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-purple-50 dark:hover:bg-purple-900/30 hover:border-purple-300 dark:hover:border-purple-700 font-semibold"
               >
                   <ArrowLeft className="w-4 h-4 mr-2" />
                   Back
@@ -254,21 +310,21 @@ export default function GenerateImagePage() {
               className="group relative"
             >
               <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl blur opacity-0 group-hover:opacity-50 transition duration-500" />
-              <Card className="relative bg-white border-2 border-purple-100 shadow-lg group-hover:shadow-2xl transition-all">
+              <Card className="relative bg-white dark:bg-slate-800 border-2 border-purple-100 dark:border-purple-900/50 shadow-lg group-hover:shadow-2xl transition-all">
                 <CardHeader>
-                <CardTitle className="text-xl flex items-center gap-2 text-gray-800 font-bold">
+                <CardTitle className="text-xl flex items-center gap-2 text-gray-900 dark:text-white font-bold">
                     <motion.div animate={{ rotate: [0, 10, -10, 0] }} transition={{ duration: 2, repeat: Infinity }}>
                       <Wand2 className="w-5 h-5 text-purple-600" />
                     </motion.div>
                     Generate Image
                 </CardTitle>
-                <CardDescription className="text-gray-600">
+                <CardDescription className="text-gray-600 dark:text-gray-300">
                     Create AI-powered advertisement visuals for {selectedCampaign.name}
                 </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                 <div className="space-y-2">
-                    <label className="text-sm font-semibold flex items-center gap-2 text-gray-700">
+                    <label className="text-sm font-semibold flex items-center gap-2 text-gray-700 dark:text-gray-300">
                     <Sparkles className="w-4 h-4 text-purple-500" />
                     Description/Prompt
                     </label>
@@ -276,19 +332,32 @@ export default function GenerateImagePage() {
                     value={prompt}
                     onChange={(e) => setPrompt(e.target.value)}
                     placeholder="Describe your product, mood, colors, and advertising goal..."
-                    className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 min-h-[100px] resize-none transition-all"
+                    className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-slate-900 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 min-h-[100px] resize-none transition-all"
                     />
+                    <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+                      <span>Use your campaign details to draft a prompt.</span>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="h-7 px-2 text-purple-600 dark:text-purple-300 hover:bg-purple-50 dark:hover:bg-purple-900/30"
+                        onClick={handleGeneratePrompt}
+                        disabled={promptGenerating}
+                      >
+                        <Sparkles className="w-3 h-3 mr-1" /> {promptGenerating ? 'Generating...' : 'Generate with AI'}
+                      </Button>
+                    </div>
                 </div>
 
                 <div className="space-y-2">
-                    <label className="text-sm font-semibold flex items-center gap-2 text-gray-700">
+                    <label className="text-sm font-semibold flex items-center gap-2 text-gray-700 dark:text-gray-300">
                     <Palette className="w-4 h-4 text-pink-500" />
                     Style
                     </label>
                     <select
                     value={style}
                     onChange={(e) => setStyle(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all"
+                    className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-slate-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all"
                     >
                     <option value="professional">Professional</option>
                     <option value="creative">Creative</option>
@@ -299,14 +368,14 @@ export default function GenerateImagePage() {
                 </div>
 
                 <div className="space-y-2">
-                    <label className="text-sm font-semibold flex items-center gap-2 text-gray-700">
+                    <label className="text-sm font-semibold flex items-center gap-2 text-gray-700 dark:text-gray-300">
                     <Monitor className="w-4 h-4 text-blue-500" />
                     Platform
                     </label>
                     <select
                     value={platform}
                     onChange={(e) => setPlatform(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all"
+                    className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-slate-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all"
                     >
                     <option value="instagram">Instagram</option>
                     <option value="facebook">Facebook</option>
@@ -317,14 +386,14 @@ export default function GenerateImagePage() {
                 </div>
 
                 <div className="space-y-2">
-                    <label className="text-sm font-semibold flex items-center gap-2 text-gray-700">
+                    <label className="text-sm font-semibold flex items-center gap-2 text-gray-700 dark:text-gray-300">
                     <ImageIcon className="w-4 h-4 text-purple-500" />
                     Resolution
                     </label>
                     <select
                     value={resolution}
                     onChange={(e) => setResolution(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all"
+                    className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-slate-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all"
                     >
                     <option value="square">Square (1:1)</option>
                     <option value="portrait">Portrait (9:16)</option>
@@ -368,20 +437,22 @@ export default function GenerateImagePage() {
               className="group relative"
             >
               <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl blur opacity-0 group-hover:opacity-50 transition duration-500" />
-              <Card className="relative bg-white border-2 border-blue-100 shadow-lg group-hover:shadow-2xl transition-all">
+              <Card className="relative bg-white dark:bg-slate-800 border-2 border-blue-100 dark:border-blue-900/50 shadow-lg group-hover:shadow-2xl transition-all">
                 <CardHeader>
-                <CardTitle className="text-xl flex items-center gap-2 text-gray-800 font-bold">
+                <CardTitle className="text-xl flex items-center gap-2 text-gray-900 dark:text-white font-bold">
                     <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 2, repeat: Infinity }}>
                       <ImageIcon className="w-5 h-5 text-blue-500" />
                     </motion.div>
                     Generated Image
                 </CardTitle>
-                <CardDescription className="text-gray-600">
+                <CardDescription className="text-gray-600 dark:text-gray-300">
                     Your AI-generated advertisement visual
                 </CardDescription>
                 </CardHeader>
                 <CardContent>
-                {generatedImage ? (
+                {generating && !generatedImage ? (
+                  <GeneratingImage />
+                ) : generatedImage ? (
                     <div className="space-y-4">
                     <motion.div
                       initial={{ scale: 0.9, opacity: 0 }}
@@ -418,26 +489,44 @@ export default function GenerateImagePage() {
                               )}
                           </Button>
                         </motion.div>
+                        <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
+                          <Button
+                            size="sm"
+                            className="bg-white hover:bg-gray-100 text-gray-900 font-semibold h-8 w-8 p-0"
+                            onClick={handleRegenerateImage}
+                            disabled={regenerating}
+                            title="Regenerate"
+                          >
+                            <RefreshCw className={`w-4 h-4 ${regenerating ? 'animate-spin' : ''}`} />
+                          </Button>
+                        </motion.div>
                         </div>
                     </motion.div>
 
                     <div className="space-y-3">
-                        <p className="text-sm text-gray-700 line-clamp-3 font-semibold">
+                        <p className="text-sm text-gray-700 dark:text-gray-200 line-clamp-3 font-semibold">
                         {generatedImage.prompt}
                         </p>
-                        <div className="flex justify-between items-center text-xs text-gray-600">
-                        <div className="flex items-center gap-1 bg-white px-2 py-1 rounded border border-gray-200">
+                        <div className="flex justify-between items-center text-xs text-gray-600 dark:text-gray-400">
+                        <div className="flex items-center gap-1 bg-white dark:bg-slate-700 px-2 py-1 rounded border border-gray-200 dark:border-gray-600">
                             <Calendar className="w-3 h-3" />
                             {new Date(generatedImage.createdAt).toLocaleDateString()}
                         </div>
                         <div className="flex gap-1">
-                          <Badge variant="outline" className="border-blue-300 text-blue-700 bg-blue-50 text-xs font-semibold">
+                          <Badge variant="outline" className="border-blue-300 dark:border-blue-700 text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-900/40 text-xs font-semibold">
                             {generatedImage.style}
                             </Badge>
-                          <Badge variant="outline" className="border-purple-300 text-purple-700 bg-purple-50 text-xs font-semibold">
+                          <Badge variant="outline" className="border-purple-300 dark:border-purple-700 text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-900/40 text-xs font-semibold">
                             {generatedImage.platform}
                             </Badge>
                         </div>
+                        </div>
+                        <div className="pt-2">
+                          <DownloadExportButtons
+                            caption={generatedImage.prompt}
+                            imageUrl={generatedImage.imageUrl}
+                            filename={`image-${generatedImage._id}`}
+                          />
                         </div>
                     </div>
 
@@ -459,13 +548,13 @@ export default function GenerateImagePage() {
                       animate={{ opacity: 1 }}
                       className="flex flex-col items-center justify-center min-h-[300px] text-center"
                     >
-                    <div className="p-4 bg-gradient-to-br from-purple-100 to-pink-100 rounded-full mb-4">
-                      <ImageIcon className="w-16 h-16 text-purple-600" />
+                    <div className="p-4 bg-gradient-to-br from-purple-100 dark:from-purple-900/40 to-pink-100 dark:to-pink-900/40 rounded-full mb-4">
+                      <ImageIcon className="w-16 h-16 text-purple-600 dark:text-purple-400" />
                     </div>
-                    <h3 className="text-lg font-bold text-gray-800 mb-2">
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-gray-200 mb-2">
                         No Image Generated Yet
                     </h3>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
                         Fill out the form and click "Generate Image" to create your first AI-powered advertisement visual.
                     </p>
                     </motion.div>
@@ -477,15 +566,18 @@ export default function GenerateImagePage() {
         )}
 
         {selectedCampaign && (
-        <motion.div 
-          className="text-center text-sm text-gray-600 bg-gradient-to-r from-purple-50 to-pink-50 p-4 rounded-xl border border-purple-200 font-semibold flex items-center justify-center gap-2"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-        >
-            <Sparkles className="w-4 h-4 text-purple-600" />
-            Generating images for {selectedCampaign.name} • 
-            <span className="text-purple-600 flex items-center gap-1"><Zap className="w-3 h-3" />{selectedCampaign.credits} credits remaining</span>
-        </motion.div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <motion.div 
+            className="lg:col-span-2 text-center text-sm text-gray-600 dark:text-gray-300 bg-gradient-to-r from-purple-50 dark:from-purple-900/30 to-pink-50 dark:to-pink-900/30 p-4 rounded-xl border border-purple-200 dark:border-purple-800 font-semibold flex items-center justify-center gap-2"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+              <Sparkles className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+              Generating images for {selectedCampaign.name} • 
+              <span className="text-purple-600 dark:text-purple-300 flex items-center gap-1"><Zap className="w-3 h-3" />{selectedCampaign.credits} credits remaining</span>
+          </motion.div>
+          <RecentGenerations type="images" campaignId={selectedCampaign._id} />
+        </div>
         )}
     </div>
   );

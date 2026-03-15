@@ -74,6 +74,17 @@ export default function RecentGenerations({ type = 'captions', campaignId }) {
     );
   }
 
+  const getDisplayText = (item) => (
+    item.content ||
+    item.caption ||
+    item.script ||
+    item.text ||
+    item.prompt ||
+    item.title ||
+    item.name ||
+    'Generated content'
+  );
+
   return (
     <Card className="dark:border-gray-700 dark:bg-slate-800">
       <CardHeader>
@@ -101,7 +112,7 @@ export default function RecentGenerations({ type = 'captions', campaignId }) {
             <div className="flex justify-between items-start gap-2">
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-gray-900 dark:text-gray-100 line-clamp-2">
-                  {item.content || item.caption || item.script || item.text || 'Generated content'}
+                  {getDisplayText(item)}
                 </p>
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                   {new Date(item.createdAt).toLocaleDateString()}
@@ -109,7 +120,7 @@ export default function RecentGenerations({ type = 'captions', campaignId }) {
               </div>
               <div className="flex gap-1 flex-shrink-0">
                 <Button
-                  onClick={() => copyToClipboard(item.content || item.caption || item.script || item.text)}
+                  onClick={() => copyToClipboard(getDisplayText(item))}
                   variant="ghost"
                   size="sm"
                   className="dark:hover:bg-slate-600"
