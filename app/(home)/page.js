@@ -3,7 +3,7 @@
 import CaptionGenerator from '../CaptionGenerator';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { ArrowRight, Sparkles, BarChart3, FileText, Zap, Star, ChevronRight, Gem, PenSquare, Clapperboard, Library } from 'lucide-react';
+import { ArrowRight, Sparkles, BarChart3, FileText, Zap, Star, ChevronRight, Gem, PenSquare, Clapperboard, Library, Download, Lightbulb, Zap as ZapIcon, Check, Rocket } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
@@ -59,9 +59,30 @@ const stats = [
   { label: "AI Accuracy", value: "95%", icon: Zap }
 ];
 
+const howItWorks = [
+  {
+    step: 1,
+    title: "Create Your Campaign",
+    description: "Enter your product details, target audience, and marketing platform.",
+    icon: <Lightbulb className="w-8 h-8 text-purple-600" />
+  },
+  {
+    step: 2,
+    title: "AI Generates Assets",
+    description: "Our AI instantly creates captions, images, scripts, and marketing ideas.",
+    icon: <ZapIcon className="w-8 h-8 text-purple-600" />
+  },
+  {
+    step: 3,
+    title: "Export & Deploy",
+    description: "Download your assets and publish directly to social media.",
+    icon: <Download className="w-8 h-8 text-purple-600" />
+  }
+];
+
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-purple-900">
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-pink-600/10" />
@@ -250,6 +271,63 @@ export default function Home() {
         </div>
       </section>
 
+      {/* How It Works Section */}
+      <section className="py-20 bg-white dark:bg-slate-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+              How It Works
+            </h2>
+            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+              Three simple steps to create amazing marketing assets powered by AI
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {howItWorks.map((item, index) => (
+              <motion.div
+                key={item.step}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.2, duration: 0.8 }}
+                viewport={{ once: true }}
+                className="relative"
+              >
+                {/* Connection line */}
+                {index < howItWorks.length - 1 && (
+                  <div className="hidden md:block absolute top-16 left-[60%] w-[calc(200%-120px)] h-1 bg-gradient-to-r from-purple-300 to-transparent" />
+                )}
+
+                <Card className="relative z-10 h-full border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-xl transition-shadow">
+                  <CardContent className="p-8">
+                    <div className="flex flex-col items-center text-center">
+                      <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900 dark:to-pink-900 rounded-full mb-6">
+                        {item.icon}
+                      </div>
+                      <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+                        Step {item.step}
+                      </h3>
+                      <p className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
+                        {item.title}
+                      </p>
+                      <p className="text-gray-600 dark:text-gray-400">
+                        {item.description}
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="py-20 bg-gradient-to-r from-purple-600 to-pink-600">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -266,9 +344,9 @@ export default function Home() {
               Join thousands of marketers who are already using AdCraft to create better content faster.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/campaigns/new">
+              <Link href="/campaigns">
                 <Button size="lg" className="bg-white text-purple-600 hover:bg-gray-100 px-8 py-3 text-lg font-semibold">
-                  Start Creating
+                  Start Creating Ads
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </Button>
               </Link>
@@ -279,6 +357,52 @@ export default function Home() {
           </motion.div>
         </div>
       </section>
+
+      {/* Footer */}
+      <footer className="bg-slate-900 text-gray-200 py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-4 gap-8 mb-8">
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <Gem className="w-6 h-6 text-purple-400" />
+                <span className="text-xl font-bold text-white">AdCraft</span>
+              </div>
+              <p className="text-gray-400 text-sm">
+                AI-powered marketing platform for creating stunning ads in seconds.
+              </p>
+            </div>
+            <div>
+              <h4 className="font-semibold text-white mb-4">Features</h4>
+              <ul className="space-y-2 text-sm text-gray-400">
+                <li><Link href="/captions" className="hover:text-purple-400">Caption Generator</Link></li>
+                <li><Link href="/generate-image" className="hover:text-purple-400">Image Generator</Link></li>
+                <li><Link href="/generate-script" className="hover:text-purple-400">Script Generator</Link></li>
+                <li><Link href="/campaigns" className="hover:text-purple-400">Campaigns</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold text-white mb-4">Company</h4>
+              <ul className="space-y-2 text-sm text-gray-400">
+                <li><a href="#" className="hover:text-purple-400">About</a></li>
+                <li><a href="#" className="hover:text-purple-400">Blog</a></li>
+                <li><a href="#" className="hover:text-purple-400">Pricing</a></li>
+                <li><a href="#" className="hover:text-purple-400">Contact</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold text-white mb-4">Legal</h4>
+              <ul className="space-y-2 text-sm text-gray-400">
+                <li><a href="#" className="hover:text-purple-400">Privacy</a></li>
+                <li><a href="#" className="hover:text-purple-400">Terms</a></li>
+                <li><a href="#" className="hover:text-purple-400">Support</a></li>
+              </ul>
+            </div>
+          </div>
+          <div className="border-t border-gray-800 pt-8 text-center text-gray-400 text-sm">
+            <p>&copy; 2024 AdCraft. All rights reserved. Powered by AI.</p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
