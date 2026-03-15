@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import dbConnect from '@/lib/mongodb';
+import { connectDB } from '@/lib/mongodb';
 import Campaign from '@/models/Campaign';
 import Caption from '@/models/Caption';
 import Image from '@/models/Image';
@@ -13,7 +13,7 @@ export async function GET(request, { params }) {
     return NextResponse.json({ error: 'Campaign ID is required' }, { status: 400 });
   }
 
-  await dbConnect();
+  await connectDB();
 
   try {
     const campaign = await Campaign.findById(campaignId);

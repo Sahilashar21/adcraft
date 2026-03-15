@@ -168,7 +168,7 @@ export default function CaptionGenerator() {
           variants={itemVariants}
           className="relative"
         >
-          <Card className="backdrop-blur-xl bg-white/10 border-white/20 shadow-2xl shadow-purple-500/20">
+          <Card className="backdrop-blur-xl bg-white/90 text-slate-900 border-white/60 shadow-2xl shadow-purple-500/20">
             {/* Header */}
             <motion.div
               variants={itemVariants}
@@ -176,7 +176,7 @@ export default function CaptionGenerator() {
             >
               <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-full blur-xl" />
               <motion.h2
-                className="text-3xl font-bold flex items-center gap-3 relative z-10 bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent"
+                className="text-3xl font-bold flex items-center gap-3 relative z-10 bg-gradient-to-r from-purple-700 to-pink-600 bg-clip-text text-transparent"
                 whileHover={{ scale: 1.05 }}
               >
                 <motion.div
@@ -189,13 +189,13 @@ export default function CaptionGenerator() {
               </motion.h2>
               <motion.p
                 variants={itemVariants}
-                className="text-purple-100 mt-3 relative z-10 text-lg"
+                className="text-slate-600 mt-3 relative z-10 text-lg"
               >
                 Craft the perfect marketing copy in seconds with AI magic ✨
               </motion.p>
               <motion.div
                 variants={itemVariants}
-                className="mt-6 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-sm font-medium backdrop-blur-md border border-white/10 shadow-lg"
+                className="mt-6 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-purple-100 to-pink-100 text-sm font-medium border border-purple-200 shadow-lg"
               >
                 <motion.div
                   animate={{ scale: [1, 1.2, 1] }}
@@ -214,7 +214,7 @@ export default function CaptionGenerator() {
                 className="space-y-3"
               >
                 <motion.label
-                  className="text-sm font-semibold text-purple-100 ml-1 flex items-center gap-2"
+                  className="text-sm font-semibold text-slate-700 ml-1 flex items-center gap-2"
                   whileHover={{ x: 5 }}
                 >
                   <Rocket className="w-4 h-4" />
@@ -223,24 +223,24 @@ export default function CaptionGenerator() {
                 <motion.select
                   value={selectedCampaignId}
                   onChange={(e) => setSelectedCampaignId(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent backdrop-blur-sm transition-all appearance-none cursor-pointer"
+                  className="w-full px-4 py-3 rounded-xl bg-white border border-purple-200 text-slate-900 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all appearance-none cursor-pointer"
                   whileFocus={{ scale: 1.02 }}
                 >
-                  <option value="" className="bg-slate-800 text-white">Choose a campaign...</option>
+                  <option value="" className="bg-white text-slate-900">Choose a campaign...</option>
                   {campaigns.map((campaign) => (
                     <option
                       key={campaign._id}
                       value={campaign._id}
-                      className="bg-slate-800 text-white"
+                      className="bg-white text-slate-900"
                     >
                       {campaign.name} - {campaign.businessName} ({campaign.objective}) - {campaign.credits || 0} credits left
                     </option>
                   ))}
                 </motion.select>
                 {campaigns.length === 0 && !loading && (
-                  <p className="text-purple-200 text-sm mt-2 flex items-center gap-2">
+                  <p className="text-slate-500 text-sm mt-2 flex items-center gap-2">
                     <AlertCircle className="w-4 h-4" />
-                    No campaigns found. <a href="/campaigns/new" className="text-purple-300 hover:text-purple-100 underline">Create one first</a> in the dashboard.
+                    No campaigns found. <a href="/campaigns/new" className="text-purple-600 hover:text-purple-700 underline">Create one first</a> in the dashboard.
                   </p>
                 )}
               </motion.div>
@@ -268,7 +268,7 @@ export default function CaptionGenerator() {
               {/* Result Area */}
               <motion.div
                 variants={itemVariants}
-                className="relative min-h-[140px] flex items-center justify-center bg-gradient-to-br from-white/5 to-white/10 rounded-2xl border-2 border-dashed border-purple-400/30 group transition-all hover:border-purple-400/60 hover:shadow-lg hover:shadow-purple-500/20 backdrop-blur-sm"
+                className="relative min-h-[140px] flex items-center justify-center bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl border-2 border-dashed border-purple-200 group transition-all hover:border-purple-400/60 hover:shadow-lg hover:shadow-purple-500/20"
               >
                 {loading ? (
                   <motion.div
@@ -284,7 +284,7 @@ export default function CaptionGenerator() {
                       <Loader2 className="w-10 h-10 text-purple-400" />
                     </motion.div>
                     <motion.span
-                      className="text-sm text-purple-200 font-medium"
+                      className="text-sm text-slate-600 font-medium"
                       animate={{ opacity: [0.5, 1, 0.5] }}
                       transition={{ duration: 1.5, repeat: Infinity }}
                     >
@@ -294,7 +294,7 @@ export default function CaptionGenerator() {
                       {[0, 1, 2].map((i) => (
                         <motion.div
                           key={i}
-                          className="w-2 h-2 bg-purple-400 rounded-full"
+                          className="w-2 h-2 bg-purple-500 rounded-full"
                           animate={{ scale: [1, 1.5, 1] }}
                           transition={{ duration: 0.8, repeat: Infinity, delay: i * 0.2 }}
                         />
@@ -308,7 +308,7 @@ export default function CaptionGenerator() {
                     transition={{ type: "spring", stiffness: 200 }}
                     className="w-full p-6 text-center relative"
                   >
-                    <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-xl blur-xl" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-purple-200/30 to-pink-200/30 rounded-xl blur-xl" />
                     <motion.div
                       className="relative z-10"
                       initial={{ y: 20, opacity: 0 }}
@@ -324,7 +324,7 @@ export default function CaptionGenerator() {
                       whileHover={{ scale: 1.1, rotate: 5 }}
                       whileTap={{ scale: 0.9 }}
                       onClick={copyToClipboard}
-                      className="absolute top-3 right-3 p-3 text-purple-300 hover:text-white bg-white/10 rounded-lg shadow-lg border border-white/20 opacity-0 group-hover:opacity-100 transition-all backdrop-blur-sm hover:bg-white/20"
+                      className="absolute top-3 right-3 p-3 text-purple-600 hover:text-purple-800 bg-white rounded-lg shadow-lg border border-purple-200 opacity-0 group-hover:opacity-100 transition-all"
                       title="Copy to clipboard"
                     >
                       <AnimatePresence mode="wait">
@@ -352,7 +352,7 @@ export default function CaptionGenerator() {
                   </motion.div>
                 ) : (
                   <motion.span
-                    className="text-purple-300 text-sm flex items-center gap-2"
+                    className="text-purple-500 text-sm flex items-center gap-2"
                     animate={{ opacity: [0.5, 1, 0.5] }}
                     transition={{ duration: 2, repeat: Infinity }}
                   >

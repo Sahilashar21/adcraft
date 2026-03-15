@@ -3,6 +3,80 @@ import { connectDB } from '@/lib/mongodb';
 import Campaign from '@/models/Campaign';
 import Image from '@/models/Image';
 
+// Configure route for longer execution time (60 seconds for Replicate polling)
+export const maxDuration = 60;
+export const dynamic = 'force-dynamic';
+
+async function generateFluxImage(
+  prompt,
+  { timeoutMs = 30000, retries = 2, width, height } = {}
+) {
+  const apiKey = process.env.POLLINATIONS_API_KEY;
+  if (!apiKey) {
+    throw new Error('POLLINATIONS_API_KEY not configured in environment variables');
+  }
+
+  const pollUrl = new URL(
+    `/image/${encodeURIComponent(prompt)}`,
+    'https://gen.pollinations.ai'
+  );
+  pollUrl.searchParams.set('model', 'flux');
+  pollUrl.searchParams.set('seed', Math.floor(Math.random() * 1000000).toString());
+  if (width && height) {
+    pollUrl.searchParams.set('width', String(width));
+    pollUrl.searchParams.set('height', String(height));
+  }
+
+  let lastError;
+  for (let attempt = 0; attempt <= retries; attempt += 1) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+    try {
+      console.log(`Flux Pollinations attempt ${attempt + 1}/${retries + 1}...`);
+      console.log(`URL: ${pollUrl.toString()}`);
+
+      const imageRes = await fetch(pollUrl.toString(), {
+        signal: controller.signal,
+        cache: 'no-store',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Accept': 'image/*',
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+        }
+      });
+
+      if (!imageRes.ok) {
+        const errorText = await imageRes.text().catch(() => 'No error details');
+        throw new Error(`Flux API error: ${imageRes.status} ${imageRes.statusText}`);
+      }
+
+      const arrayBuffer = await imageRes.arrayBuffer();
+      console.log(`✓ Flux image generated successfully (${arrayBuffer.byteLength} bytes)`);
+      return Buffer.from(arrayBuffer);
+    } catch (error) {
+      lastError = error;
+      console.error(`Attempt ${attempt + 1} failed:`, error.message);
+
+      if (attempt < retries) {
+        const delay = 1000 * Math.pow(2, attempt);
+        console.log(`Retrying in ${delay}ms...`);
+        await new Promise((resolve) => setTimeout(resolve, delay));
+      }
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  }
+
+  if (lastError?.name === 'AbortError') {
+    throw new Error('Flux generation timeout. Please try again.');
+  }
+
+  throw lastError || new Error('Flux image generation failed. Please try again.');
+}
+
+
+
 export async function POST(request) {
   try {
     await connectDB();
@@ -101,25 +175,12 @@ export async function POST(request) {
         break;
     }
 
-    // Generate image using Pollinations.ai (Free API)
-    // Using a random seed to ensure unique generations for the same prompt
-    const seed = Math.floor(Math.random() * 1000000);
-    const apiKey = process.env.POLLINATIONS_API_KEY;
-    
-    const pollUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(enhancedPrompt)}`;
-
-    const imageRes = await fetch(pollUrl, {
-      headers: apiKey ? { 'Authorization': `Bearer ${apiKey}` } : {},
-      cache: 'no-store'
+    // Generate image using Flux via Pollinations
+    console.log('Starting Flux image generation for campaign:', campaignId);
+    const buffer = await generateFluxImage(enhancedPrompt, {
+      width: dimensions.width,
+      height: dimensions.height
     });
-
-    if (!imageRes.ok) {
-      const errorText = await imageRes.text();
-      throw new Error(`Pollinations API error: ${imageRes.status} ${imageRes.statusText} - ${errorText}`);
-    }
-
-    const arrayBuffer = await imageRes.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
     const base64Image = buffer.toString('base64');
     const imageUrl = `data:image/jpeg;base64,${base64Image}`;
 
@@ -152,9 +213,27 @@ export async function POST(request) {
 
   } catch (error) {
     console.error('Image generation error:', error);
+    
+    // Determine appropriate status code
+    let status = 500;
+    let errorMessage = 'Internal server error';
+    
+    if (error?.message?.includes('Pollinations API')) {
+      status = 502;
+      errorMessage = 'Image API temporarily unavailable. Please try again in a moment.';
+    } else if (error?.message?.includes('timeout')) {
+      status = 504;
+      errorMessage = 'Request timeout. The image is taking too long to generate. Please try again.';
+    } else if (error?.name === 'AbortError') {
+      status = 504;
+      errorMessage = 'Request timeout. Please try again with a simpler prompt.';
+    } else if (error?.message) {
+      errorMessage = error.message;
+    }
+    
     return NextResponse.json(
-      { error: error.message || 'Internal server error' },
-      { status: 500 }
+      { error: errorMessage },
+      { status }
     );
   }
 }

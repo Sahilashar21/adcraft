@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { VideoIcon, Calendar, Download, Copy, Check, ArrowLeft, Target, Building, Sparkles } from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function VideosPage() {
   const [campaigns, setCampaigns] = useState([]);
@@ -82,36 +83,46 @@ export default function VideosPage() {
 
   if (loading && !selectedCampaign) {
     return (
-        <div className="flex items-center justify-center h-full">
-            <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto mb-4"></div>
-            <p className="text-lg text-gray-600">Loading campaigns...</p>
-            </div>
+        <div className="flex items-center justify-center h-full min-h-[400px]">
+          <div className="relative">
+            <div className="w-16 h-16 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin"></div>
+            <Sparkles className="w-6 h-6 text-purple-600 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+          </div>
         </div>
     );
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 animate-fade-in">
         <div className="flex justify-between items-center">
         <div className="flex items-center gap-4">
             {selectedCampaign && (
-            <Button
-                variant="outline"
-                onClick={handleBackToCampaigns}
+            <motion.div
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
             >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Campaigns
-            </Button>
+              <Button
+                  variant="outline"
+                  onClick={handleBackToCampaigns}
+                  className="border-slate-300 text-slate-700 hover:bg-gradient-to-r hover:from-slate-50 hover:to-purple-50 hover:border-purple-300 transition-all duration-300"
+              >
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Back
+              </Button>
+            </motion.div>
             )}
-            <h2 className="text-3xl font-bold text-gray-800 flex items-center gap-3">
-                <VideoIcon className="w-8 h-8 text-purple-600" />
-                {selectedCampaign ? `Videos for ${selectedCampaign.name}` : 'Video Library'}
-            </h2>
+            <div>
+              <h2 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent flex items-center gap-3">
+                  {selectedCampaign ? selectedCampaign.name : 'Video Library'}
+              </h2>
+              <p className="text-slate-600 mt-1 text-base">
+                {selectedCampaign ? 'View all videos for this campaign' : 'Browse your AI-generated videos'}
+              </p>
+            </div>
         </div>
         <Link href="/generate-video">
-            <Button className="bg-purple-600 hover:bg-purple-700 text-white">
-                <Sparkles className="w-4 h-4 mr-2" /> Generate New Video
+            <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-0.5 px-6 py-6">
+                <Sparkles className="w-5 h-5 mr-2" /> Generate New Video
             </Button>
         </Link>
         </div>
@@ -119,17 +130,19 @@ export default function VideosPage() {
         {!selectedCampaign ? (
         // Campaign Selection View
         campaigns.length === 0 ? (
-            <div className="flex flex-1 items-center justify-center rounded-lg border-2 border-dashed border-gray-200 bg-white min-h-[400px]">
+            <div className="flex flex-1 items-center justify-center rounded-lg border-2 border-dashed border-purple-200 bg-gradient-to-br from-purple-50 to-pink-50 min-h-[400px]">
                 <div className="flex flex-col items-center gap-1 text-center">
-                    <Target className="w-16 h-16 text-gray-400 mb-4" />
+                    <div className="p-4 bg-gradient-to-br from-purple-100 to-pink-100 rounded-full">
+                      <Target className="w-16 h-16 text-purple-600" />
+                    </div>
                     <h3 className="text-2xl font-bold tracking-tight text-gray-800">
                     No campaigns found
                     </h3>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-gray-600">
                     Create your first campaign to start generating videos.
                     </p>
                     <Link href="/campaigns/new">
-                    <Button className="mt-4 bg-purple-600 hover:bg-purple-700 text-white">
+                    <Button className="mt-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 px-6 py-3">
                         <Target className="w-4 h-4 mr-2" /> Create Campaign
                     </Button>
                     </Link>
