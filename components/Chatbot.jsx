@@ -33,7 +33,7 @@ export default function Chatbot() {
   const [messages, setMessages] = useState([
     {
       role: 'assistant',
-      content: 'I\'m Shraddha, an expert advertising assistant. I can provide you with concise, actionable ad ideas, hooks, captions, and campaign suggestions. I\'m here to help your business grow and reach its advertising goals. What kind of business or product do you have that you\'d like to advertise?'
+      content: 'I\'m adcraft assistant, an expert advertising assistant. I can provide you with concise, actionable ad ideas, hooks, captions, and campaign suggestions. I\'m here to help your business grow and reach its advertising goals. What kind of business or product do you have that you\'d like to advertise?'
     }
   ]);
   const [isLoading, setIsLoading] = useState(false);
@@ -103,7 +103,7 @@ export default function Chatbot() {
               <div className="h-8 w-8 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 text-white flex items-center justify-center">
                 <Sparkles className="h-4 w-4" />
               </div>
-              Shraddha
+              adcraft assistant
             </div>
             <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)}>
               <X className="h-4 w-4" />

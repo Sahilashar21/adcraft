@@ -12,8 +12,25 @@ import ffmpegStatic from 'ffmpeg-static';
 export const maxDuration = 300;
 export const dynamic = 'force-dynamic';
 
-async function fetchPollinationsImage(prompt, { timeoutMs = 30000, retries = 2 } = {}) {
-  const pollUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}`;
+async function generateFluxImage(
+  prompt,
+  { timeoutMs = 30000, retries = 2, width, height } = {}
+) {
+  const apiKey = process.env.POLLINATIONS_API_KEY;
+  if (!apiKey) {
+    throw new Error('POLLINATIONS_API_KEY not configured in environment variables');
+  }
+
+  const pollUrl = new URL(
+    `/image/${encodeURIComponent(prompt)}`,
+    'https://gen.pollinations.ai'
+  );
+  pollUrl.searchParams.set('model', 'flux');
+  pollUrl.searchParams.set('seed', Math.floor(Math.random() * 1000000).toString());
+  if (width && height) {
+    pollUrl.searchParams.set('width', String(width));
+    pollUrl.searchParams.set('height', String(height));
+  }
 
   let lastError;
   for (let attempt = 0; attempt <= retries; attempt += 1) {
@@ -21,30 +38,33 @@ async function fetchPollinationsImage(prompt, { timeoutMs = 30000, retries = 2 }
     const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
     try {
-      console.log(`Pollinations API attempt ${attempt + 1}/${retries + 1}...`);
-      
-      const imageRes = await fetch(pollUrl, {
+      console.log(`Flux Pollinations attempt ${attempt + 1}/${retries + 1}...`);
+      console.log(`URL: ${pollUrl.toString()}`);
+
+      const imageRes = await fetch(pollUrl.toString(), {
         signal: controller.signal,
         cache: 'no-store',
         headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Accept': 'image/*',
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
         }
       });
 
       if (!imageRes.ok) {
         const errorText = await imageRes.text().catch(() => 'No error details');
-        throw new Error(`Pollinations API error: ${imageRes.status} ${imageRes.statusText}`);
+        throw new Error(`Flux API error: ${imageRes.status} ${imageRes.statusText}`);
       }
 
       const arrayBuffer = await imageRes.arrayBuffer();
-      console.log(`✓ Successfully fetched image (${arrayBuffer.byteLength} bytes)`);
+      console.log(`✓ Flux image generated successfully (${arrayBuffer.byteLength} bytes)`);
       return Buffer.from(arrayBuffer);
     } catch (error) {
       lastError = error;
       console.error(`Attempt ${attempt + 1} failed:`, error.message);
-      
+
       if (attempt < retries) {
-        const delay = 1000 * (attempt + 1);
+        const delay = 1000 * Math.pow(2, attempt);
         console.log(`Retrying in ${delay}ms...`);
         await new Promise((resolve) => setTimeout(resolve, delay));
       }
@@ -54,11 +74,12 @@ async function fetchPollinationsImage(prompt, { timeoutMs = 30000, retries = 2 }
   }
 
   if (lastError?.name === 'AbortError') {
-    throw new Error('Pollinations API timeout. Please try again.');
+    throw new Error('Flux generation timeout. Please try again.');
   }
 
-  throw lastError || new Error('Pollinations API error. Please try again.');
+  throw lastError || new Error('Flux image generation failed. Please try again.');
 }
+
 
 /* =========================================
    FFmpeg PATH FIX (WINDOWS + NEXT.JS SAFE)
@@ -116,19 +137,29 @@ export async function POST(request) {
 
     // Determine video size based on resolution
     let videoSize;
+    let imageWidth;
+    let imageHeight;
     switch (resolution) {
       case 'portrait':
         videoSize = '720x1280';
+        imageWidth = 720;
+        imageHeight = 1280;
         break;
       case 'landscape':
         videoSize = '1280x720';
+        imageWidth = 1280;
+        imageHeight = 720;
         break;
       case 'banner':
         videoSize = '1080x360';
+        imageWidth = 1080;
+        imageHeight = 360;
         break;
       case 'square':
       default:
         videoSize = '720x720';
+        imageWidth = 720;
+        imageHeight = 720;
         break;
     }
 
@@ -180,8 +211,11 @@ export async function POST(request) {
     }
 
     /* ================= IMAGE GENERATION ================= */
-    console.log('Starting image generation for video...');
-    const imageBuffer = await fetchPollinationsImage(enhancedPrompt);
+    console.log('Starting Flux image generation for video...');
+    const imageBuffer = await generateFluxImage(enhancedPrompt, {
+      width: imageWidth,
+      height: imageHeight
+    });
 
     /* ================= TEMP FILES ================= */
     const tmpDir = path.join(process.cwd(), 'tmp');
